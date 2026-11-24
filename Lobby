@@ -1,1 +1,1629 @@
-Lobby
+wait(5)
+-- ============================================================================
+-- LEGACY _ Lobby (93712201161812) // AUTO SUMMON & AUTO SELL HUB
+-- Uses Direct BridgeNet2 + Hash Wire (Safe against Network.IsVaild trap)
+-- ============================================================================
+
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+
+local Players           = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService        = game:GetService("RunService")
+local UserInputService  = game:GetService("UserInputService")
+local VirtualUser       = game:GetService("VirtualUser")
+
+local LocalPlayer = Players.LocalPlayer or Players.PlayerAdded:Wait()
+local ENV = (type(getgenv) == "function" and getgenv()) or _G
+
+if ENV.RetroToiletsLobbyHub and type(ENV.RetroToiletsLobbyHub.Unload) == "function" then
+    pcall(function() ENV.RetroToiletsLobbyHub:Unload() end)
+end
+
+-- ============================================================================
+-- 1. EMBEDDED HASH (REPAIRED PRIME SIEVE - ZERO FREEZE)
+-- ============================================================================
+local Hash = (function()
+    local bit32_band, bit32_bxor = bit32.band, bit32.bxor
+    local bit32_lshift, bit32_rshift = bit32.lshift, bit32.rshift
+    local u4, u5, v6, v7, u8, u9, u12 = {}, {}, {}, {}, {}, {}, {}
+    local v13, v14, v15 = v7, v6, 4
+    local v16 = { 4, 1, 2, -2, 2 }
+
+    local function sha512_feed_128(p17, p18, p19, p20, p21)
+        local v22, v23, v24 = u12, u4, u5
+        local v25, v26, v27, v28, v29, v30, v31, v32 = p17[1], p17[2], p17[3], p17[4], p17[5], p17[6], p17[7], p17[8]
+        local v33, v34, v35, v36, v37, v38, v39, v40 = p18[1], p18[2], p18[3], p18[4], p18[5], p18[6], p18[7], p18[8]
+        for i = p20, p20 + p21 - 1, 128 do
+            local v42 = i
+            for i2 = 1, 32 do
+                v42 += 4
+                local b1, b2, b3, b4 = string.byte(p19, v42 - 3, v42)
+                v22[i2] = ((b1 * 256 + b2) * 256 + b3) * 256 + b4
+            end
+            for i2 = 34, 160, 2 do
+                local v47, v48, v49, v50 = v22[i2 - 30], v22[i2 - 31], v22[i2 - 4], v22[i2 - 5]
+                local v51 = bit32_bxor(bit32_rshift(v47, 1) + bit32_lshift(v48, 31), bit32_rshift(v47, 8) + bit32_lshift(v48, 24), bit32_rshift(v47, 7) + bit32_lshift(v48, 25)) % 4294967296
+                    + bit32_bxor(bit32_rshift(v49, 19) + bit32_lshift(v50, 13), bit32_lshift(v49, 3) + bit32_rshift(v50, 29), bit32_rshift(v49, 6) + bit32_lshift(v50, 26)) % 4294967296
+                    + v22[i2 - 14] + v22[i2 - 32]
+                local v52 = v51 % 4294967296
+                v22[i2 - 1] = bit32_bxor(bit32_rshift(v48, 1) + bit32_lshift(v47, 31), bit32_rshift(v48, 8) + bit32_lshift(v47, 24), bit32_rshift(v48, 7))
+                    + bit32_bxor(bit32_rshift(v50, 19) + bit32_lshift(v49, 13), bit32_lshift(v50, 3) + bit32_rshift(v49, 29), bit32_rshift(v50, 6))
+                    + v22[i2 - 15] + v22[i2 - 33] + (v51 - v52) / 4294967296
+                v22[i2] = v52
+            end
+            local v53, v54, v55, v56, v57, v58, v59, v60 = v33, v27, v31, v29, v39, v37, v34, v35
+            local v61, v62, v63, v64, v65, v66, v67, v68 = v32, v26, v25, v28, v30, v40, v38, v36
+            for i2 = 1, 80 do
+                local v69 = i2 * 2
+                local v70 = bit32_bxor(bit32_rshift(v29, 14) + bit32_lshift(v37, 18), bit32_rshift(v29, 18) + bit32_lshift(v37, 14), bit32_lshift(v29, 23) + bit32_rshift(v37, 9)) % 4294967296
+                    + (bit32_band(v29, v30) + bit32_band(-1 - v29, v31)) % 4294967296 + v32 + v23[i2] + v22[v69]
+                local v71 = v70 % 4294967296
+                local v72 = bit32_bxor(bit32_rshift(v37, 14) + bit32_lshift(v29, 18), bit32_rshift(v37, 18) + bit32_lshift(v29, 14), bit32_lshift(v37, 23) + bit32_rshift(v29, 9))
+                    + bit32_band(v37, v38) + bit32_band(-1 - v37, v39) + v40 + v24[i2] + v22[v69 - 1] + (v70 - v71) / 4294967296
+                local v73 = v71 + v28
+                local v74 = v73 % 4294967296
+                local v75 = v72 + v36 + (v73 - v74) / 4294967296
+                local v76 = v71 + (bit32_band(v27, v26) + bit32_band(v25, bit32_bxor(v27, v26))) % 4294967296
+                    + bit32_bxor(bit32_rshift(v25, 28) + bit32_lshift(v33, 4), bit32_lshift(v25, 30) + bit32_rshift(v33, 2), bit32_lshift(v25, 25) + bit32_rshift(v33, 7)) % 4294967296
+                local v77 = v76 % 4294967296
+                local v78 = v72 + (bit32_band(v35, v34) + bit32_band(v33, bit32_bxor(v35, v34)))
+                    + bit32_bxor(bit32_rshift(v33, 28) + bit32_lshift(v25, 4), bit32_lshift(v33, 30) + bit32_rshift(v25, 2), bit32_lshift(v33, 25) + bit32_rshift(v25, 7)) + (v76 - v77) / 4294967296
+                v32, v31, v30, v29 = v31, v30, v29, v74
+                v36, v35, v34, v33 = v35, v34, v33, v78
+                v28, v27, v26, v25 = v27, v26, v25, v77
+                v40, v39, v38, v37 = v39, v38, v37, v75
+            end
+            local v79 = v63 + v25; v25 = v79 % 4294967296; v33 = (v53 + v33 + (v79 - v25) / 4294967296) % 4294967296
+            local v80 = v62 + v26; v26 = v80 % 4294967296; v34 = (v59 + v34 + (v80 - v26) / 4294967296) % 4294967296
+            local v81 = v54 + v27; v27 = v81 % 4294967296; v35 = (v60 + v35 + (v81 - v27) / 4294967296) % 4294967296
+            local v82 = v64 + v28; v28 = v82 % 4294967296; v36 = (v68 + v36 + (v82 - v28) / 4294967296) % 4294967296
+            local v83 = v56 + v29; v29 = v83 % 4294967296; v37 = (v58 + v37 + (v83 - v29) / 4294967296) % 4294967296
+            local v84 = v65 + v30; v30 = v84 % 4294967296; v38 = (v67 + v38 + (v84 - v30) / 4294967296) % 4294967296
+            local v85 = v55 + v31; v31 = v85 % 4294967296; v39 = (v57 + v39 + (v85 - v31) / 4294967296) % 4294967296
+            local v86 = v61 + v32; v32 = v86 % 4294967296; v40 = (v66 + v40 + (v86 - v32) / 4294967296) % 4294967296
+        end
+        p17[1], p17[2], p17[3], p17[4], p17[5], p17[6], p17[7], p17[8] = v25, v26, v27, v28, v29, v30, v31, v32
+        p18[1], p18[2], p18[3], p18[4], p18[5], p18[6], p18[7], p18[8] = v33, v34, v35, v36, v37, v38, v39, v40
+    end
+
+    local u117 = { [384] = {}, [512] = v6 }
+    local v118, v119 = { 1 }, 0
+
+    local function keccak_feed(p120, p121, p122, p123, p124, p125)
+        local v126, v127, v128 = u8, u9, p125 / 8
+        for i = p123, p123 + p124 - 1, p125 do
+            local v130 = i
+            for i2 = 1, v128 do
+                local b1, b2, b3, b4 = string.byte(p122, v130 + 1, v130 + 4)
+                p120[i2] = bit32_bxor(p120[i2], ((b4 * 256 + b3) * 256 + b2) * 256 + b1)
+                v130 += 8
+                local b5, b6, b7, b8 = string.byte(p122, v130 - 3, v130)
+                p121[i2] = bit32_bxor(p121[i2], ((b8 * 256 + b7) * 256 + b6) * 256 + b5)
+            end
+            local v138, v139 = p120[1], p121[1]
+            local v140, v141 = p120[2], p121[2]
+            local v142, v143 = p120[3], p121[3]
+            local v144, v145 = p120[4], p121[4]
+            local v146, v147 = p120[5], p121[5]
+            local v148, v149 = p120[6], p121[6]
+            local v150, v151 = p120[7], p121[7]
+            local v152, v153 = p120[8], p121[8]
+            local v154, v155 = p120[9], p121[9]
+            local v156, v157 = p120[10], p121[10]
+            local v158, v159 = p120[11], p121[11]
+            local v160, v161 = p120[12], p121[12]
+            local v162, v163 = p120[13], p121[13]
+            local v164, v165 = p120[14], p121[14]
+            local v166, v167 = p120[15], p121[15]
+            local v168, v169 = p120[16], p121[16]
+            local v170, v171 = p120[17], p121[17]
+            local v172, v173 = p120[18], p121[18]
+            local v174, v175 = p120[19], p121[19]
+            local v176, v177 = p120[20], p121[20]
+            local v178, v179 = p120[21], p121[21]
+            local v180, v181 = p120[22], p121[22]
+            local v182, v183 = p120[23], p121[23]
+            local v184, v185 = p120[24], p121[24]
+            local v186, v187 = p120[25], p121[25]
+            for i2 = 1, 24 do
+                local v188 = bit32_bxor(v138, v148, v158, v168, v178)
+                local v189 = bit32_bxor(v139, v149, v159, v169, v179)
+                local v190 = bit32_bxor(v140, v150, v160, v170, v180)
+                local v191 = bit32_bxor(v141, v151, v161, v171, v181)
+                local v192 = bit32_bxor(v142, v152, v162, v172, v182)
+                local v193 = bit32_bxor(v143, v153, v163, v173, v183)
+                local v194 = bit32_bxor(v144, v154, v164, v174, v184)
+                local v195 = bit32_bxor(v145, v155, v165, v175, v185)
+                local v196 = bit32_bxor(v146, v156, v166, v176, v186)
+                local v197 = bit32_bxor(v147, v157, v167, v177, v187)
+                local v198 = bit32_bxor(v188, v192 * 2 + (v193 % 4294967296 - v193 % 2147483648) / 2147483648)
+                local v199 = bit32_bxor(v189, v193 * 2 + (v192 % 4294967296 - v192 % 2147483648) / 2147483648)
+                local v200, v201 = bit32_bxor(v198, v140), bit32_bxor(v199, v141)
+                local v202, v203 = bit32_bxor(v198, v150), bit32_bxor(v199, v151)
+                local v204, v205 = bit32_bxor(v198, v160), bit32_bxor(v199, v161)
+                local v206, v207 = bit32_bxor(v198, v170), bit32_bxor(v199, v171)
+                local v208, v209 = bit32_bxor(v198, v180), bit32_bxor(v199, v181)
+                local v210 = (v202 % 4294967296 - v202 % 1048576) / 1048576 + v203 * 4096
+                local v211 = (v203 % 4294967296 - v203 % 1048576) / 1048576 + v202 * 4096
+                local v212 = (v206 % 4294967296 - v206 % 524288) / 524288 + v207 * 8192
+                local v213 = (v207 % 4294967296 - v207 % 524288) / 524288 + v206 * 8192
+                local v214 = v200 * 2 + (v201 % 4294967296 - v201 % 2147483648) / 2147483648
+                local v215 = v201 * 2 + (v200 % 4294967296 - v200 % 2147483648) / 2147483648
+                local v216 = v204 * 1024 + (v205 % 4294967296 - v205 % 4194304) / 4194304
+                local v217 = v205 * 1024 + (v204 % 4294967296 - v204 % 4194304) / 4194304
+                local v218 = v208 * 4 + (v209 % 4294967296 - v209 % 1073741824) / 1073741824
+                local v219 = v209 * 4 + (v208 % 4294967296 - v208 % 1073741824) / 1073741824
+                local v220 = bit32_bxor(v190, v194 * 2 + (v195 % 4294967296 - v195 % 2147483648) / 2147483648)
+                local v221 = bit32_bxor(v191, v195 * 2 + (v194 % 4294967296 - v194 % 2147483648) / 2147483648)
+                local v222, v223 = bit32_bxor(v220, v142), bit32_bxor(v221, v143)
+                local v224, v225 = bit32_bxor(v220, v152), bit32_bxor(v221, v153)
+                local v226, v227 = bit32_bxor(v220, v162), bit32_bxor(v221, v163)
+                local v228, v229 = bit32_bxor(v220, v172), bit32_bxor(v221, v173)
+                local v230, v231 = bit32_bxor(v220, v182), bit32_bxor(v221, v183)
+                local v232 = (v226 % 4294967296 - v226 % 2097152) / 2097152 + v227 * 2048
+                local v233 = (v227 % 4294967296 - v227 % 2097152) / 2097152 + v226 * 2048
+                local v234 = (v230 % 4294967296 - v230 % 8) / 8 + v231 * 536870912 % 4294967296
+                local v235 = (v231 % 4294967296 - v231 % 8) / 8 + v230 * 536870912 % 4294967296
+                local v236 = v224 * 64 + (v225 % 4294967296 - v225 % 67108864) / 67108864
+                local v237 = v225 * 64 + (v224 % 4294967296 - v224 % 67108864) / 67108864
+                local v238 = v228 * 32768 + (v229 % 4294967296 - v229 % 131072) / 131072
+                local v239 = v229 * 32768 + (v228 % 4294967296 - v228 % 131072) / 131072
+                local v240 = (v222 % 4294967296 - v222 % 4) / 4 + v223 * 1073741824 % 4294967296
+                local v241 = (v223 % 4294967296 - v223 % 4) / 4 + v222 * 1073741824 % 4294967296
+                local v242 = bit32_bxor(v192, v196 * 2 + (v197 % 4294967296 - v197 % 2147483648) / 2147483648)
+                local v243 = bit32_bxor(v193, v197 * 2 + (v196 % 4294967296 - v196 % 2147483648) / 2147483648)
+                local v244, v245 = bit32_bxor(v242, v144), bit32_bxor(v243, v145)
+                local v246, v247 = bit32_bxor(v242, v154), bit32_bxor(v243, v155)
+                local v248, v249 = bit32_bxor(v242, v164), bit32_bxor(v243, v165)
+                local v250, v251 = bit32_bxor(v242, v174), bit32_bxor(v243, v175)
+                local v252, v253 = bit32_bxor(v242, v184), bit32_bxor(v243, v185)
+                local v254 = v250 * 2097152 % 4294967296 + (v251 % 4294967296 - v251 % 2048) / 2048
+                local v255 = v251 * 2097152 % 4294967296 + (v250 % 4294967296 - v250 % 2048) / 2048
+                local v256 = v244 * 268435456 % 4294967296 + (v245 % 4294967296 - v245 % 16) / 16
+                local v257 = v245 * 268435456 % 4294967296 + (v244 % 4294967296 - v244 % 16) / 16
+                local v258 = v248 * 33554432 % 4294967296 + (v249 % 4294967296 - v249 % 128) / 128
+                local v259 = v249 * 33554432 % 4294967296 + (v248 % 4294967296 - v248 % 128) / 128
+                local v260 = (v252 % 4294967296 - v252 % 256) / 256 + v253 * 16777216 % 4294967296
+                local v261 = (v253 % 4294967296 - v253 % 256) / 256 + v252 * 16777216 % 4294967296
+                local v262 = (v246 % 4294967296 - v246 % 512) / 512 + v247 * 8388608 % 4294967296
+                local v263 = (v247 % 4294967296 - v247 % 512) / 512 + v246 * 8388608 % 4294967296
+                local v264 = bit32_bxor(v194, v188 * 2 + (v189 % 4294967296 - v189 % 2147483648) / 2147483648)
+                local v265 = bit32_bxor(v195, v189 * 2 + (v188 % 4294967296 - v188 % 2147483648) / 2147483648)
+                local v266, v267 = bit32_bxor(v264, v146), bit32_bxor(v265, v147)
+                local v268, v269 = bit32_bxor(v264, v156), bit32_bxor(v265, v157)
+                local v270, v271 = bit32_bxor(v264, v166), bit32_bxor(v265, v167)
+                local v272, v273 = bit32_bxor(v264, v176), bit32_bxor(v265, v177)
+                local v274, v275 = bit32_bxor(v264, v186), bit32_bxor(v265, v187)
+                local v276 = v274 * 16384 + (v275 % 4294967296 - v275 % 262144) / 262144
+                local v277 = v275 * 16384 + (v274 % 4294967296 - v274 % 262144) / 262144
+                local v278 = v268 * 1048576 % 4294967296 + (v269 % 4294967296 - v269 % 4096) / 4096
+                local v279 = v269 * 1048576 % 4294967296 + (v268 % 4294967296 - v268 % 4096) / 4096
+                local v280 = v272 * 256 + (v273 % 4294967296 - v273 % 16777216) / 16777216
+                local v281 = v273 * 256 + (v272 % 4294967296 - v272 % 16777216) / 16777216
+                local v282 = v266 * 134217728 % 4294967296 + (v267 % 4294967296 - v267 % 32) / 32
+                local v283 = v267 * 134217728 % 4294967296 + (v266 % 4294967296 - v266 % 32) / 32
+                local v284 = (v270 % 4294967296 - v270 % 33554432) / 33554432 + v271 * 128
+                local v285 = (v271 % 4294967296 - v271 % 33554432) / 33554432 + v270 * 128
+                local v286 = bit32_bxor(v196, v190 * 2 + (v191 % 4294967296 - v191 % 2147483648) / 2147483648)
+                local v287 = bit32_bxor(v197, v191 * 2 + (v190 % 4294967296 - v190 % 2147483648) / 2147483648)
+                local v288, v289 = bit32_bxor(v286, v148), bit32_bxor(v287, v149)
+                local v290, v291 = bit32_bxor(v286, v158), bit32_bxor(v287, v159)
+                local v292, v293 = bit32_bxor(v286, v168), bit32_bxor(v287, v169)
+                local v294, v295 = bit32_bxor(v286, v178), bit32_bxor(v287, v179)
+                local v296 = v290 * 8 + (v291 % 4294967296 - v291 % 536870912) / 536870912
+                local v297 = v291 * 8 + (v290 % 4294967296 - v290 % 536870912) / 536870912
+                local v298 = v294 * 262144 + (v295 % 4294967296 - v295 % 16384) / 16384
+                local v299 = v295 * 262144 + (v294 % 4294967296 - v294 % 16384) / 16384
+                local v300 = (v288 % 4294967296 - v288 % 268435456) / 268435456 + v289 * 16
+                local v301 = (v289 % 4294967296 - v289 % 268435456) / 268435456 + v288 * 16
+                local v302 = (v292 % 4294967296 - v292 % 8388608) / 8388608 + v293 * 512
+                local v303 = (v293 % 4294967296 - v293 % 8388608) / 8388608 + v292 * 512
+                local v304, v305 = bit32_bxor(v286, v138), bit32_bxor(v287, v139)
+                local v306 = bit32_bxor(v304, bit32_band(-1 - v210, v232))
+                v140 = bit32_bxor(v210, bit32_band(-1 - v232, v254))
+                v142 = bit32_bxor(v232, bit32_band(-1 - v254, v276))
+                v144 = bit32_bxor(v254, bit32_band(-1 - v276, v304))
+                v146 = bit32_bxor(v276, bit32_band(-1 - v304, v210))
+                local v307 = bit32_bxor(v305, bit32_band(-1 - v211, v233))
+                v141 = bit32_bxor(v211, bit32_band(-1 - v233, v255))
+                v143 = bit32_bxor(v233, bit32_band(-1 - v255, v277))
+                v145 = bit32_bxor(v255, bit32_band(-1 - v277, v305))
+                v147 = bit32_bxor(v277, bit32_band(-1 - v305, v211))
+                v148 = bit32_bxor(v256, bit32_band(-1 - v278, v296))
+                v150 = bit32_bxor(v278, bit32_band(-1 - v296, v212))
+                v152 = bit32_bxor(v296, bit32_band(-1 - v212, v234))
+                v154 = bit32_bxor(v212, bit32_band(-1 - v234, v256))
+                v156 = bit32_bxor(v234, bit32_band(-1 - v256, v278))
+                v149 = bit32_bxor(v257, bit32_band(-1 - v279, v297))
+                v151 = bit32_bxor(v279, bit32_band(-1 - v297, v213))
+                v153 = bit32_bxor(v297, bit32_band(-1 - v213, v235))
+                v155 = bit32_bxor(v213, bit32_band(-1 - v235, v257))
+                v157 = bit32_bxor(v235, bit32_band(-1 - v257, v279))
+                v158 = bit32_bxor(v214, bit32_band(-1 - v236, v258))
+                v160 = bit32_bxor(v236, bit32_band(-1 - v258, v280))
+                v162 = bit32_bxor(v258, bit32_band(-1 - v280, v298))
+                v164 = bit32_bxor(v280, bit32_band(-1 - v298, v214))
+                v166 = bit32_bxor(v298, bit32_band(-1 - v214, v236))
+                v159 = bit32_bxor(v215, bit32_band(-1 - v237, v259))
+                v161 = bit32_bxor(v237, bit32_band(-1 - v259, v281))
+                v163 = bit32_bxor(v259, bit32_band(-1 - v281, v299))
+                v165 = bit32_bxor(v281, bit32_band(-1 - v299, v215))
+                v167 = bit32_bxor(v299, bit32_band(-1 - v215, v237))
+                v168 = bit32_bxor(v282, bit32_band(-1 - v300, v216))
+                v170 = bit32_bxor(v300, bit32_band(-1 - v216, v238))
+                v172 = bit32_bxor(v216, bit32_band(-1 - v238, v260))
+                v174 = bit32_bxor(v238, bit32_band(-1 - v260, v282))
+                v176 = bit32_bxor(v260, bit32_band(-1 - v282, v300))
+                v169 = bit32_bxor(v283, bit32_band(-1 - v301, v217))
+                v171 = bit32_bxor(v301, bit32_band(-1 - v217, v239))
+                v173 = bit32_bxor(v217, bit32_band(-1 - v239, v261))
+                v175 = bit32_bxor(v239, bit32_band(-1 - v261, v283))
+                v177 = bit32_bxor(v261, bit32_band(-1 - v283, v301))
+                v178 = bit32_bxor(v240, bit32_band(-1 - v262, v284))
+                v180 = bit32_bxor(v262, bit32_band(-1 - v284, v302))
+                v182 = bit32_bxor(v284, bit32_band(-1 - v302, v218))
+                v184 = bit32_bxor(v302, bit32_band(-1 - v218, v240))
+                v186 = bit32_bxor(v218, bit32_band(-1 - v240, v262))
+                v179 = bit32_bxor(v241, bit32_band(-1 - v263, v285))
+                v181 = bit32_bxor(v263, bit32_band(-1 - v285, v303))
+                v183 = bit32_bxor(v285, bit32_band(-1 - v303, v219))
+                v185 = bit32_bxor(v303, bit32_band(-1 - v219, v241))
+                v187 = bit32_bxor(v219, bit32_band(-1 - v241, v263))
+                v138 = bit32_bxor(v306, v126[i2])
+                v139 = v307 + v127[i2]
+            end
+            p120[1], p121[1] = v138, v139
+            p120[2], p121[2] = v140, v141
+            p120[3], p121[3] = v142, v143
+            p120[4], p121[4] = v144, v145
+            p120[5], p121[5] = v146, v147
+            p120[6], p121[6] = v148, v149
+            p120[7], p121[7] = v150, v151
+            p120[8], p121[8] = v152, v153
+            p120[9], p121[9] = v154, v155
+            p120[10], p121[10] = v156, v157
+            p120[11], p121[11] = v158, v159
+            p120[12], p121[12] = v160, v161
+            p120[13], p121[13] = v162, v163
+            p120[14], p121[14] = v164, v165
+            p120[15], p121[15] = v166, v167
+            p120[16], p121[16] = v168, v169
+            p120[17], p121[17] = v170, v171
+            p120[18], p121[18] = v172, v173
+            p120[19], p121[19] = v174, v175
+            p120[20], p121[20] = v176, v177
+            p120[21], p121[21] = v178, v179
+            p120[22], p121[22] = v180, v181
+            p120[23], p121[23] = v182, v183
+            p120[24], p121[24] = v184, v185
+            p120[25], p121[25] = v186, v187
+        end
+    end
+
+    local u369 = { [384] = {}, [512] = v7 }
+    local function mul(p370, p371, p372, p373)
+        local t = table.create(p373)
+        local v374, v375, v376 = 0, 1, 0
+        for i = 1, p373 do
+            for i2 = math.max(1, i + 1 - #p371), math.min(i, #p370) do
+                v374 += p372 * p370[i2] * p371[i + 1 - i2]
+            end
+            local v378 = v374 % 16777216
+            t[i] = v378 - v378 % 1
+            v374 = (v374 - v378) / 16777216
+            v376 += v378 * v375
+            v375 *= 16777216
+        end
+        return t, v376
+    end
+
+    local u379 = { [224] = {}, [256] = v7 }
+    while true do
+        v15 += v16[v15 % 6]
+        local v380, isPrime = 1, false
+        repeat
+            v380 += v16[v380 % 6]
+            if v15 < v380 * v380 then
+                isPrime = true
+                break
+            end
+        until v15 % v380 == 0
+
+        if isPrime then
+            local v381 = v15 ^ (1 / 3)
+            local v382 = v381 * 1099511627776
+            local v383 = mul(table.create(1, v382 - v382 % 1), v118, 1, 2)
+            local _, v384 = mul(v383, mul(v383, v383, 1, 4), -1, 4)
+            local v385 = v383[2] % 65536 * 65536 + math.floor(v383[1] / 256)
+            local v386 = v383[1] % 256 * 16777216 + math.floor(v384 * 4.625929269271485e-18 * v381 / v15)
+
+            if v119 < 16 then
+                local math_sqrt_ret = math.sqrt(v15)
+                local v387 = math_sqrt_ret * 1099511627776
+                local v388 = mul(table.create(1, v387 - v387 % 1), v118, 1, 2)
+                local _, v389 = mul(v388, v388, -1, 2)
+                local v390 = v388[2] % 65536 * 65536 + math.floor(v388[1] / 256)
+                local v391 = v388[1] % 256 * 16777216 + math.floor(v389 * 7.62939453125e-6 / math_sqrt_ret)
+                local v392 = v119 % 8 + 1
+                u379[224][v392] = v391
+                v7[v392] = v390
+                v6[v392] = v391
+                if v392 > 7 then
+                    v7 = u369[384]
+                    v6 = u117[384]
+                end
+            end
+
+            v119 += 1
+            u5[v119] = v385
+            u4[v119] = v386 % 4294967296
+            if v119 > 79 then
+                break
+            end
+        end
+    end
+
+    for i = 224, 256, 32 do
+        local v394, v395 = {}, {}
+        for i2 = 1, 8 do
+            v394[i2] = bit32_bxor(v14[i2], 2779096485) % 4294967296
+            v395[i2] = bit32_bxor(v13[i2], 2779096485) % 4294967296
+        end
+        sha512_feed_128(v394, v395, "SHA-512/" .. tostring(i) .. "\128" .. string.rep("\0", 115) .. "X", 0, 128)
+        u117[i] = v394
+        u369[i] = v395
+    end
+
+    local u398 = 29
+    for i = 1, 24 do
+        local v401, v402 = nil, 0
+        for _ = 1, 6 do
+            v401 = v401 and v401 * v401 * 2 or 1
+            local v403 = u398 % 2
+            u398 = bit32_bxor((u398 - v403) / 2, v403 * 142)
+            v402 += v403 * v401
+        end
+        local v404 = u398 % 2
+        u398 = bit32_bxor((u398 - v404) / 2, v404 * 142)
+        u9[i] = v404 * v401
+        u8[i] = v402
+    end
+
+    local function sha512ext(bits, msg)
+        local totalBytes, buf = 0, ""
+        local hLo = table.pack(table.unpack(u117[bits]))
+        local hHi = table.pack(table.unpack(u369[bits]))
+        local function feed(chunk)
+            if not chunk then
+                if buf then
+                    local t = table.create(3)
+                    t[1], t[2], t[3] = buf, "\128", string.rep("\0", (-17 - totalBytes) % 128 + 9)
+                    buf = nil
+                    totalBytes *= 1.1102230246251565e-16
+                    for i = 4, 10 do
+                        totalBytes = totalBytes % 1 * 256
+                        t[i] = string.char(totalBytes - totalBytes % 1)
+                    end
+                    local tail = table.concat(t)
+                    sha512_feed_128(hLo, hHi, tail, 0, #tail)
+                    local nWords = math.ceil(bits / 64)
+                    for i = 1, nWords do
+                        hLo[i] = string.format("%08x", hHi[i] % 4294967296) .. string.format("%08x", hLo[i] % 4294967296)
+                    end
+                    hHi = nil
+                    hLo = string.sub(table.concat(hLo, "", 1, nWords), 1, bits / 4)
+                end
+                return hLo
+            end
+            local len = #chunk
+            totalBytes += len
+            local offset = 0
+            if buf ~= "" and #buf + len >= 128 then
+                offset = 128 - #buf
+                sha512_feed_128(hLo, hHi, buf .. string.sub(chunk, 1, offset), 0, 128)
+                buf = ""
+            end
+            local rem = len - offset
+            local mod = rem % 128
+            sha512_feed_128(hLo, hHi, chunk, offset, rem - mod)
+            buf ..= string.sub(chunk, len + 1 - mod)
+            return feed
+        end
+        return feed(msg)()
+    end
+
+    local function keccak(blockSize, digestBytes, isShake, msg)
+        local stLo, stHi = table.create(25, 0), table.create(25, 0)
+        local len = #msg
+        local mod = len % blockSize
+        keccak_feed(stLo, stHi, msg, 0, len - mod, blockSize)
+        local buf = string.sub(msg, len + 1 - mod)
+        local pad = isShake and 31 or 6
+        local padded = buf .. ((#buf + 1 == blockSize) and string.char(pad + 128) or (string.char(pad) .. string.rep("\0", (-2 - #buf) % blockSize) .. "\128"))
+        keccak_feed(stLo, stHi, padded, 0, #padded, blockSize)
+        local qIdx, qCap, qBuf = 0, math.floor(blockSize / 8), {}
+        local function getQWords(n)
+            if qCap <= qIdx then
+                keccak_feed(stLo, stHi, "\0\0\0\0\0\0\0\0", 0, 8, 8)
+                qIdx = 0
+            end
+            local count = math.floor(math.min(n, qCap - qIdx))
+            for i = 1, count do
+                qBuf[i] = string.format("%08x", stHi[qIdx + i] % 4294967296) .. string.format("%08x", stLo[qIdx + i] % 4294967296)
+            end
+            qIdx += count
+            return string.gsub(table.concat(qBuf, "", 1, count), "(..)(..)(..)(..)(..)(..)(..)(..)", "%8%7%6%5%4%3%2%1"), count * 8
+        end
+        local outParts, left, nParts = {}, digestBytes, 0
+        while left >= 8 do
+            local chunk, taken = getQWords(left / 8)
+            nParts += 1
+            outParts[nParts] = chunk
+            left -= taken
+        end
+        if left > 0 then
+            local tail = getQWords(1)
+            nParts += 1
+            outParts[nParts] = string.sub(tail, 1, left * 2)
+        end
+        return table.concat(outParts, "", 1, nParts)
+    end
+
+    return {
+        sha512_224 = function(str) return sha512ext(224, str) end,
+        sha512_256 = function(str) return sha512ext(256, str) end,
+        sha3_224 = function(str) return keccak(144, 28, false, str) end,
+    }
+end)()
+
+-- ============================================================================
+-- 2. STATE, THEME & SINGLETON SETUP
+-- ============================================================================
+local RARITY_KEYS = { "Basic", "Uncommon", "Rare", "Epic", "Legendary" }
+
+local Config = {
+    Cost10x = 900,
+    Cost1x = 100,
+    SummonInterval = 0.75,
+    SyncInterval = 0.45,
+}
+
+local Theme = {
+    ShellBg        = Color3.fromRGB(43, 21, 19),
+    ShellStroke    = Color3.fromRGB(115, 34, 24),
+    HeaderTop      = Color3.fromRGB(205, 53, 33),
+    HeaderBottom   = Color3.fromRGB(130, 25, 17),
+    PillTop        = Color3.fromRGB(214, 58, 36),
+    PillBottom     = Color3.fromRGB(154, 30, 19),
+    PillStroke     = Color3.fromRGB(240, 145, 125),
+    LeftCardTop    = Color3.fromRGB(98, 22, 16),
+    LeftCardBottom = Color3.fromRGB(61, 13, 9),
+    LeftCardStroke = Color3.fromRGB(145, 42, 30),
+    LeftRowTop     = Color3.fromRGB(128, 29, 20),
+    LeftRowBottom  = Color3.fromRGB(88, 18, 12),
+    SlotDark       = Color3.fromRGB(46, 12, 9),
+    BarFill        = Color3.fromRGB(208, 56, 36),
+    CreamTop       = Color3.fromRGB(248, 224, 216),
+    CreamBottom    = Color3.fromRGB(234, 188, 176),
+    CreamStroke    = Color3.fromRGB(204, 130, 118),
+    CreamRow       = Color3.fromRGB(254, 243, 239),
+    CreamRowStroke = Color3.fromRGB(224, 172, 160),
+    TextLight      = Color3.fromRGB(255, 245, 240),
+    TextMuted      = Color3.fromRGB(232, 190, 182),
+    TextDark       = Color3.fromRGB(82, 24, 18),
+    CheckOnTop     = Color3.fromRGB(96, 204, 72),
+    CheckOnBottom  = Color3.fromRGB(64, 158, 46),
+    CheckOnStroke  = Color3.fromRGB(42, 110, 30),
+    CheckOffDark   = Color3.fromRGB(54, 17, 13),
+    CheckOffCream  = Color3.fromRGB(224, 184, 174),
+    BtnMinTop      = Color3.fromRGB(178, 52, 35),
+    BtnMinBottom   = Color3.fromRGB(122, 27, 17),
+    BtnCloseTop    = Color3.fromRGB(222, 54, 38),
+    BtnCloseBottom = Color3.fromRGB(158, 28, 19),
+}
+
+local State = {
+    Unloaded = false,
+    Minimized = false,
+    Check900 = false,
+    Check100 = false,
+    AntiAFK = true,
+    CurrentCoins = 0,
+    SummonCount = 0,
+    LastUnitText = "",
+    WireReady = false,
+    WireStatus = "Connecting Wire...",
+    StatusText = "Idle",
+    SyncText = "Game UI Sync: Waiting...",
+    AutoSell = {
+        Basic = false,
+        Uncommon = false,
+        Rare = false,
+        Epic = false,
+        Legendary = false,
+    },
+    DataRemote = nil,
+    IdStorage = nil,
+    NilIdentifier = "B",
+    MatchGuidObj = nil,
+    GameTimeValObj = nil,
+    HashCache = {},
+    HashCacheGuid = "",
+    HashCacheTime = -1,
+    OutboundQueue = {},
+    InboundHandlers = {},
+    CurrentCharacter = LocalPlayer.Character,
+    LastSummonSentAt = 0,
+    LastSummonConfirmedAt = 0,
+}
+
+-- Pre-allocated loop state (zero allocations inside Heartbeat)
+local LoopTimers = {
+    SummonElapsed = 0,
+    SyncElapsed = 0,
+}
+
+local Connections = {}
+local GameSyncHooks = {}
+local UI = {
+    RarityRows = {},
+}
+
+local function trackConn(conn)
+    if conn then
+        table.insert(Connections, conn)
+    end
+    return conn
+end
+
+local function onCharacterAdded(character)
+    State.CurrentCharacter = character
+end
+
+local function onCharacterRemoving()
+    State.CurrentCharacter = nil
+end
+
+trackConn(LocalPlayer.CharacterAdded:Connect(onCharacterAdded))
+trackConn(LocalPlayer.CharacterRemoving:Connect(onCharacterRemoving))
+
+trackConn(LocalPlayer.Idled:Connect(function()
+    if not State.Unloaded and State.AntiAFK then
+        pcall(function()
+            VirtualUser:CaptureController()
+            VirtualUser:ClickButton2(Vector2.new())
+        end)
+    end
+end))
+
+-- ============================================================================
+-- 3. DIRECT BRIDGENET2 + HASH WIRE
+-- ============================================================================
+local function letterToNumber(ch)
+    local num = tonumber(ch)
+    if num then return num end
+    local idx = string.find("abcdefghijklmnopqrstuvwxyz-", string.lower(ch), 1, true)
+    return tonumber(idx) or 0
+end
+
+local function getHashedEventName(eventName, mode)
+    local guidObj, timeObj = State.MatchGuidObj, State.GameTimeValObj
+    if not (guidObj and timeObj) then
+        return nil
+    end
+
+    local guid = tostring(guidObj.Value)
+    local gt = tonumber(timeObj.Value) or 1
+    if guid ~= State.HashCacheGuid or gt ~= State.HashCacheTime then
+        table.clear(State.HashCache)
+        State.HashCacheGuid = guid
+        State.HashCacheTime = gt
+    end
+
+    local cacheKey = tostring(mode) .. ":" .. tostring(eventName)
+    if State.HashCache[cacheKey] then
+        return State.HashCache[cacheKey]
+    end
+
+    local sub1 = string.sub(guid, gt, gt)
+    local idx2 = math.clamp(gt + 3, 1, 32)
+    local sub2 = string.sub(guid, idx2, idx2)
+    local prefix = (mode == "FuncRecieve") and "FR_" or "UR_"
+
+    if RunService:IsStudio() then
+        local studioName = prefix .. tostring(eventName)
+        State.HashCache[cacheKey] = studioName
+        return studioName
+    end
+
+    local fmt = letterToNumber(sub2) > 17
+        and "%s-%s_%s'%s:%s|%s/%s!%s=%s@%s(%s$%s*%s&%s^%s?%s{%s"
+        or "%s/%s!%s=%s@%s(%s$%s*%s&%s^%s?%s{%s-%s_%s'%s:%s|%s"
+
+    local pVer = tostring(game.PlaceVersion)
+    local cId = tostring(game.CreatorId)
+    local pId = tostring(game.PlaceId)
+    local gId = tostring(game.GameId)
+    local eStr = tostring(eventName)
+
+    local formatted = string.format(
+        fmt, eStr, pId, pVer, cId, sub1, sub2, eStr, pId,
+        sub1, pVer, cId, gId, sub1, eStr, pId, sub1, sub2
+    )
+
+    local n1 = letterToNumber(sub1)
+    local digest
+    if n1 > 15 then
+        digest = Hash.sha3_224(formatted)
+    elseif n1 > 6 then
+        digest = Hash.sha512_224(formatted)
+    else
+        digest = Hash.sha512_256(formatted)
+    end
+
+    local full = prefix .. digest
+    State.HashCache[cacheKey] = full
+    return full
+end
+
+local function packArgs(...)
+    local packed = table.pack(...)
+    local out, nilId = {}, State.NilIdentifier
+    for i = 1, packed.n do
+        out[i] = (packed[i] == nil) and nilId or packed[i]
+    end
+    return out
+end
+
+local function unpackArgs(tbl)
+    if type(tbl) ~= "table" then return end
+    local nilId, n = State.NilIdentifier, 0
+    for k in pairs(tbl) do
+        if type(k) == "number" and k > n then
+            n = k
+        end
+    end
+    local copy = {}
+    for i = 1, n do
+        copy[i] = (tbl[i] ~= nilId) and tbl[i] or nil
+    end
+    return table.unpack(copy, 1, n)
+end
+
+local function resolveEventId(eventName)
+    if not State.IdStorage then
+        return nil
+    end
+    local hashed = getHashedEventName("Event-" .. eventName, "Event")
+    if not hashed then
+        return nil
+    end
+    local strVal = State.IdStorage:FindFirstChild(hashed)
+    if strVal and strVal:IsA("StringValue") then
+        return strVal.Value
+    end
+    return nil
+end
+
+local function fireBridgeEvent(eventName, ...)
+    if not State.DataRemote then
+        return false
+    end
+    local id = resolveEventId(eventName)
+    if not id then
+        return false
+    end
+    table.insert(State.OutboundQueue, packArgs(...))
+    table.insert(State.OutboundQueue, id)
+    return true
+end
+
+local function bindInboundEvent(eventName, callback)
+    local hashed = getHashedEventName("Event-" .. eventName, "Event")
+    if not (hashed and State.IdStorage) then
+        return
+    end
+    local function attach(child)
+        if child and child.Name == hashed and child:IsA("StringValue") then
+            State.InboundHandlers[child.Value] = State.InboundHandlers[child.Value] or {}
+            table.insert(State.InboundHandlers[child.Value], callback)
+        end
+    end
+    local existing = State.IdStorage:FindFirstChild(hashed)
+    if existing then
+        attach(existing)
+    end
+    trackConn(State.IdStorage.ChildAdded:Connect(attach))
+end
+
+local function initNetworkWire()
+    State.DataRemote = ReplicatedStorage:WaitForChild("dataRemoteEvent", 15)
+    State.IdStorage = ReplicatedStorage:WaitForChild("identifierStorage", 15)
+    State.MatchGuidObj = ReplicatedStorage:WaitForChild("MatchGuid", 15)
+    State.GameTimeValObj = ReplicatedStorage:WaitForChild("GameTimeVal", 15)
+
+    if not (State.DataRemote and State.IdStorage and State.MatchGuidObj and State.GameTimeValObj) then
+        State.WireReady = false
+        State.WireStatus = "Wire Missing RS"
+        return false
+    end
+
+    local nilObj = State.IdStorage:WaitForChild("NilIdentifier", 10)
+    if nilObj and nilObj:IsA("StringValue") then
+        State.NilIdentifier = nilObj.Value
+    end
+
+    trackConn(RunService.PostSimulation:Connect(function()
+        if State.Unloaded then
+            return
+        end
+        local q = State.OutboundQueue
+        if #q > 0 and State.DataRemote then
+            local batch = table.clone(q)
+            table.clear(q)
+            State.DataRemote:FireServer(batch)
+        end
+    end))
+
+    trackConn(State.DataRemote.OnClientEvent:Connect(function(packetMap)
+        if State.Unloaded or type(packetMap) ~= "table" then
+            return
+        end
+        for idChar, payloads in pairs(packetMap) do
+            local handlers = State.InboundHandlers[idChar]
+            if handlers and type(payloads) == "table" then
+                for _, argsTbl in ipairs(payloads) do
+                    for _, fn in ipairs(handlers) do
+                        task.spawn(fn, unpackArgs(argsTbl))
+                    end
+                end
+            end
+        end
+    end))
+
+    bindInboundEvent("1TroopSummoned", function(troopId)
+        State.SummonCount += 1
+        State.LastSummonConfirmedAt = os.clock()
+        State.LastUnitText = tostring(troopId or "Unit")
+        State.StatusText = "Summoned 1x: " .. State.LastUnitText
+    end)
+
+    bindInboundEvent("10TroopsSummoned", function(troopsList)
+        State.SummonCount += 10
+        State.LastSummonConfirmedAt = os.clock()
+        local lastOne = (type(troopsList) == "table" and troopsList[#troopsList]) or "10 Units"
+        State.LastUnitText = tostring(lastOne)
+        State.StatusText = "Summoned 10x (Last: " .. State.LastUnitText .. ")"
+    end)
+
+    local s1 = resolveEventId("Summon1")
+    local s10 = resolveEventId("Summon10")
+    if s1 and s10 then
+        State.WireReady = true
+        State.WireStatus = "Wire OK (" .. s1 .. "/" .. s10 .. ")"
+    else
+        State.WireReady = false
+        State.WireStatus = "Waiting for Summon IDs..."
+    end
+
+    return true
+end
+
+-- ============================================================================
+-- 4. COINS & IN-GAME AUTO-SELL UI SYNC
+-- ============================================================================
+local function readCoins()
+    local ls = LocalPlayer:FindFirstChild("leaderstats")
+    local coinsVal = ls and ls:FindFirstChild("Coins")
+    if coinsVal and (coinsVal:IsA("IntValue") or coinsVal:IsA("NumberValue")) then
+        return tonumber(coinsVal.Value) or 0
+    end
+
+    local pg = LocalPlayer:FindFirstChildOfClass("PlayerGui")
+    local lobby = pg and pg:FindFirstChild("Lobby")
+    local currFrame = lobby and lobby:FindFirstChild("CurrenciesFrame")
+    local coinAmount = currFrame and currFrame:FindFirstChild("CoinAmount")
+    local currLayout = coinAmount and coinAmount:FindFirstChild("CurrencyLayout")
+    local amountLbl = currLayout and currLayout:FindFirstChild("AmountLabel")
+    if amountLbl and amountLbl:IsA("TextLabel") then
+        local cleaned = string.gsub(amountLbl.Text, "[,%s]", "")
+        local parsed = tonumber(cleaned)
+        if parsed then
+            return parsed
+        end
+    end
+
+    return 0
+end
+
+local function isInGameToggleOn(btn)
+    if not (btn and btn:IsA("GuiObject")) then
+        return false
+    end
+    if btn:IsA("TextButton") or btn:IsA("TextLabel") then
+        local upper = string.upper(btn.Text)
+        if upper == "ON" then
+            return true
+        elseif upper == "OFF" then
+            return false
+        end
+    end
+    local bg = btn.BackgroundColor3
+    return bg.G > (bg.R + 0.15) and bg.G > (bg.B + 0.15)
+end
+
+local function countActiveAutoSell()
+    local count = 0
+    for _, key in ipairs(RARITY_KEYS) do
+        if State.AutoSell[key] == true then
+            count += 1
+        end
+    end
+    return count
+end
+
+local function bindGameAutoSellUI()
+    local pg = LocalPlayer:FindFirstChildOfClass("PlayerGui")
+    local lobby = pg and pg:FindFirstChild("Lobby")
+    local summonShop = lobby and lobby:FindFirstChild("SummonShopFrame")
+    local autoSellFolder = summonShop and summonShop:FindFirstChild("AutoSell")
+    if not autoSellFolder then
+        State.SyncText = "Game UI Sync: Waiting for Lobby"
+        return false
+    end
+
+    local hookedAny = false
+    for _, rarityKey in ipairs(RARITY_KEYS) do
+        local rowFrame = autoSellFolder:FindFirstChild(rarityKey)
+        local btn = rowFrame and rowFrame:FindFirstChild("OnAndOff")
+        if btn and not GameSyncHooks[rarityKey] then
+            hookedAny = true
+            local initialState = isInGameToggleOn(btn)
+            if initialState == true then
+                State.AutoSell[rarityKey] = true
+            end
+
+            GameSyncHooks[rarityKey] = btn
+            trackConn(btn:GetPropertyChangedSignal("Text"):Connect(function()
+                if State.Unloaded then return end
+                State.AutoSell[rarityKey] = isInGameToggleOn(btn)
+                State.SyncText = string.format("Game UI Sync: %d/5 Active", countActiveAutoSell())
+            end))
+            trackConn(btn:GetPropertyChangedSignal("BackgroundColor3"):Connect(function()
+                if State.Unloaded then return end
+                State.AutoSell[rarityKey] = isInGameToggleOn(btn)
+                State.SyncText = string.format("Game UI Sync: %d/5 Active", countActiveAutoSell())
+            end))
+        end
+    end
+
+    if next(GameSyncHooks) ~= nil then
+        State.SyncText = string.format("Game UI Sync: %d/5 Active", countActiveAutoSell())
+        return hookedAny
+    end
+    return false
+end
+
+-- ============================================================================
+-- 5. UI CONSTRUCTION (REFERENCE IMAGE THEME - NO RAINBOW, NO EMOJIS)
+-- ============================================================================
+local function getUiParent()
+    if type(gethui) == "function" then
+        local ok, guiParent = pcall(gethui)
+        if ok and guiParent then
+            return guiParent
+        end
+    end
+    local okCore, coreGui = pcall(function()
+        return game:GetService("CoreGui")
+    end)
+    if okCore and coreGui then
+        return coreGui
+    end
+    return LocalPlayer:WaitForChild("PlayerGui")
+end
+
+local function createCorner(parent, radius)
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, radius)
+    corner.Parent = parent
+    return corner
+end
+
+local function createStroke(parent, color, thickness, transparency)
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = color
+    stroke.Thickness = thickness or 1
+    stroke.Transparency = transparency or 0
+    stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    stroke.Parent = parent
+    return stroke
+end
+
+local function createGradient(parent, topColor, bottomColor, rotation)
+    local gradient = Instance.new("UIGradient")
+    gradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, topColor),
+        ColorSequenceKeypoint.new(1, bottomColor),
+    })
+    gradient.Rotation = rotation or 90
+    gradient.Parent = parent
+    return gradient
+end
+
+local function createCheckmarkGeometry(parent)
+    local holder = Instance.new("Frame")
+    holder.Name = "CheckShape"
+    holder.Size = UDim2.fromScale(1, 1)
+    holder.BackgroundTransparency = 1
+    holder.Visible = false
+    holder.Parent = parent
+
+    local shortLeg = Instance.new("Frame")
+    shortLeg.BorderSizePixel = 0
+    shortLeg.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    shortLeg.Size = UDim2.fromOffset(6, 2)
+    shortLeg.Position = UDim2.fromOffset(4, 11)
+    shortLeg.Rotation = 45
+    shortLeg.Parent = holder
+
+    local longLeg = Instance.new("Frame")
+    longLeg.BorderSizePixel = 0
+    longLeg.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    longLeg.Size = UDim2.fromOffset(11, 2)
+    longLeg.Position = UDim2.fromOffset(7, 9)
+    longLeg.Rotation = -45
+    longLeg.Parent = holder
+
+    return holder
+end
+
+local function createCrossGeometry(parent)
+    local barA = Instance.new("Frame")
+    barA.BorderSizePixel = 0
+    barA.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    barA.AnchorPoint = Vector2.new(0.5, 0.5)
+    barA.Size = UDim2.fromOffset(12, 2)
+    barA.Position = UDim2.fromScale(0.5, 0.5)
+    barA.Rotation = 45
+    barA.Parent = parent
+
+    local barB = Instance.new("Frame")
+    barB.BorderSizePixel = 0
+    barB.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    barB.AnchorPoint = Vector2.new(0.5, 0.5)
+    barB.Size = UDim2.fromOffset(12, 2)
+    barB.Position = UDim2.fromScale(0.5, 0.5)
+    barB.Rotation = -45
+    barB.Parent = parent
+end
+
+local function applyCheckboxVisual(box, gradient, stroke, checkShape, isChecked, isCreamTheme)
+    if isChecked then
+        box.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        gradient.Enabled = true
+        gradient.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Theme.CheckOnTop),
+            ColorSequenceKeypoint.new(1, Theme.CheckOnBottom),
+        })
+        stroke.Color = Theme.CheckOnStroke
+        checkShape.Visible = true
+    else
+        gradient.Enabled = false
+        box.BackgroundColor3 = isCreamTheme and Theme.CheckOffCream or Theme.CheckOffDark
+        stroke.Color = isCreamTheme and Theme.CreamStroke or Theme.LeftCardStroke
+        checkShape.Visible = false
+    end
+end
+
+local function createCheckboxRow(parent, labelText, rowHeight, isCreamTheme, onToggle)
+    local button = Instance.new("TextButton")
+    button.Name = labelText .. "Row"
+    button.Size = UDim2.new(1, 0, 0, rowHeight)
+    button.AutoButtonColor = false
+    button.Text = ""
+    button.BorderSizePixel = 0
+    button.Parent = parent
+    createCorner(button, 7)
+
+    if isCreamTheme then
+        button.BackgroundColor3 = Theme.CreamRow
+        createStroke(button, Theme.CreamRowStroke, 1, 0.15)
+    else
+        button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        createGradient(button, Theme.LeftRowTop, Theme.LeftRowBottom, 90)
+        createStroke(button, Theme.LeftCardStroke, 1, 0.25)
+    end
+
+    local label = Instance.new("TextLabel")
+    label.BackgroundTransparency = 1
+    label.Size = UDim2.new(1, -42, 1, 0)
+    label.Position = UDim2.fromOffset(10, 0)
+    label.Font = Enum.Font.GothamBold
+    label.TextSize = isCreamTheme and 12 or 13
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.TextColor3 = isCreamTheme and Theme.TextDark or Theme.TextLight
+    label.Text = labelText
+    label.Parent = button
+
+    local checkSize = isCreamTheme and 18 or 22
+    local box = Instance.new("Frame")
+    box.Name = "CheckBox"
+    box.Size = UDim2.fromOffset(checkSize, checkSize)
+    box.AnchorPoint = Vector2.new(1, 0.5)
+    box.Position = UDim2.new(1, -8, 0.5, 0)
+    box.BorderSizePixel = 0
+    box.Parent = button
+    createCorner(box, 5)
+
+    local boxGrad = createGradient(box, Theme.CheckOnTop, Theme.CheckOnBottom, 90)
+    local boxStroke = createStroke(box, Theme.CheckOnStroke, 1, 0)
+    local checkShape = createCheckmarkGeometry(box)
+
+    if isCreamTheme then
+        checkShape.Position = UDim2.fromOffset(-2, -2)
+    end
+
+    applyCheckboxVisual(box, boxGrad, boxStroke, checkShape, false, isCreamTheme)
+
+    trackConn(button.Activated:Connect(onToggle))
+
+    return {
+        Button = button,
+        Box = box,
+        Gradient = boxGrad,
+        Stroke = boxStroke,
+        CheckShape = checkShape,
+        IsCream = isCreamTheme,
+    }
+end
+
+local function refreshUI()
+    if State.Unloaded then
+        return
+    end
+
+    if UI.Row900 then
+        applyCheckboxVisual(UI.Row900.Box, UI.Row900.Gradient, UI.Row900.Stroke, UI.Row900.CheckShape, State.Check900, false)
+    end
+    if UI.Row100 then
+        applyCheckboxVisual(UI.Row100.Box, UI.Row100.Gradient, UI.Row100.Stroke, UI.Row100.CheckShape, State.Check100, false)
+    end
+
+    for _, rarityKey in ipairs(RARITY_KEYS) do
+        local ref = UI.RarityRows[rarityKey]
+        if ref then
+            applyCheckboxVisual(ref.Box, ref.Gradient, ref.Stroke, ref.CheckShape, State.AutoSell[rarityKey] == true, true)
+        end
+    end
+
+    if UI.CoinLabel then
+        UI.CoinLabel.Text = string.format("Coins: %d  |  Summoned: %d", math.floor(State.CurrentCoins), State.SummonCount)
+    end
+
+    if UI.CoinProgressFill then
+        local ratio = math.clamp(State.CurrentCoins / Config.Cost10x, 0, 1)
+        UI.CoinProgressFill.Size = UDim2.new(ratio, 0, 1, 0)
+    end
+
+    if UI.RuleLabel then
+        if State.Check900 and State.Check100 then
+            UI.RuleLabel.Text = "Priority: 900 (10x) -> Below 900: 100 (1x)"
+        elseif State.Check900 then
+            UI.RuleLabel.Text = "Mode: 900 (10x) Only (Keep Checked)"
+        elseif State.Check100 then
+            UI.RuleLabel.Text = "Mode: 100 (1x) Only (Keep Checked)"
+        else
+            UI.RuleLabel.Text = "Mode: Idle"
+        end
+    end
+
+    if UI.StatusLabel then
+        UI.StatusLabel.Text = State.WireStatus .. " | " .. State.StatusText
+    end
+
+    if UI.SyncLabel then
+        UI.SyncLabel.Text = string.format("Game UI Sync: %d/5 On", countActiveAutoSell())
+    end
+end
+
+local function unloadHub()
+    if State.Unloaded then
+        return
+    end
+    State.Unloaded = true
+    for i = #Connections, 1, -1 do
+        local conn = Connections[i]
+        if conn and conn.Connected then
+            pcall(function() conn:Disconnect() end)
+        end
+        Connections[i] = nil
+    end
+    table.clear(GameSyncHooks)
+    if UI.ScreenGui then
+        pcall(function() UI.ScreenGui:Destroy() end)
+        UI.ScreenGui = nil
+    end
+    if ENV.RetroToiletsLobbyHub then
+        ENV.RetroToiletsLobbyHub = nil
+    end
+end
+
+local function buildUI()
+    local guiParent = getUiParent()
+    local old = guiParent:FindFirstChild("RetroToiletsLobbyHub")
+    if old then
+        old:Destroy()
+    end
+
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "RetroToiletsLobbyHub"
+    screenGui.ResetOnSpawn = false
+    screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    screenGui.Parent = guiParent
+    UI.ScreenGui = screenGui
+
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Name = "MainFrame"
+    mainFrame.Size = UDim2.fromOffset(540, 344)
+    mainFrame.Position = UDim2.fromScale(0.5, 0.5)
+    mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    mainFrame.BackgroundColor3 = Theme.ShellBg
+    mainFrame.BorderSizePixel = 0
+    mainFrame.ClipsDescendants = true
+    mainFrame.Parent = screenGui
+    createCorner(mainFrame, 12)
+    createStroke(mainFrame, Theme.ShellStroke, 1.5, 0)
+    UI.MainFrame = mainFrame
+
+    local topBar = Instance.new("Frame")
+    topBar.Name = "TopBar"
+    topBar.Size = UDim2.new(1, 0, 0, 42)
+    topBar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    topBar.BorderSizePixel = 0
+    topBar.Parent = mainFrame
+    createCorner(topBar, 12)
+    createGradient(topBar, Theme.HeaderTop, Theme.HeaderBottom, 90)
+
+    local topBarBottomCover = Instance.new("Frame")
+    topBarBottomCover.Size = UDim2.new(1, 0, 0, 12)
+    topBarBottomCover.Position = UDim2.new(0, 0, 1, -12)
+    topBarBottomCover.BackgroundColor3 = Theme.HeaderBottom
+    topBarBottomCover.BorderSizePixel = 0
+    topBarBottomCover.Parent = topBar
+
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.Size = UDim2.new(1, -90, 1, 0)
+    titleLabel.Position = UDim2.fromOffset(14, 0)
+    titleLabel.Font = Enum.Font.GothamBold
+    titleLabel.TextSize = 15
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    titleLabel.TextColor3 = Theme.TextLight
+    titleLabel.Text = "RETRO TOILETS // LOBBY"
+    titleLabel.Parent = topBar
+
+    local minBtn = Instance.new("TextButton")
+    minBtn.Name = "MinimizeButton"
+    minBtn.Size = UDim2.fromOffset(26, 26)
+    minBtn.AnchorPoint = Vector2.new(1, 0.5)
+    minBtn.Position = UDim2.new(1, -40, 0.5, 0)
+    minBtn.AutoButtonColor = false
+    minBtn.Text = ""
+    minBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    minBtn.BorderSizePixel = 0
+    minBtn.Parent = topBar
+    createCorner(minBtn, 6)
+    createGradient(minBtn, Theme.BtnMinTop, Theme.BtnMinBottom, 90)
+    createStroke(minBtn, Theme.PillStroke, 1, 0.45)
+
+    local minDash = Instance.new("Frame")
+    minDash.Size = UDim2.fromOffset(12, 2)
+    minDash.AnchorPoint = Vector2.new(0.5, 0.5)
+    minDash.Position = UDim2.fromScale(0.5, 0.5)
+    minDash.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    minDash.BorderSizePixel = 0
+    minDash.Parent = minBtn
+
+    local closeBtn = Instance.new("TextButton")
+    closeBtn.Name = "UnloadButton"
+    closeBtn.Size = UDim2.fromOffset(26, 26)
+    closeBtn.AnchorPoint = Vector2.new(1, 0.5)
+    closeBtn.Position = UDim2.new(1, -8, 0.5, 0)
+    closeBtn.AutoButtonColor = false
+    closeBtn.Text = ""
+    closeBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    closeBtn.BorderSizePixel = 0
+    closeBtn.Parent = topBar
+    createCorner(closeBtn, 6)
+    createGradient(closeBtn, Theme.BtnCloseTop, Theme.BtnCloseBottom, 90)
+    createStroke(closeBtn, Theme.PillStroke, 1, 0.45)
+    createCrossGeometry(closeBtn)
+
+    local bodyFrame = Instance.new("Frame")
+    bodyFrame.Name = "BodyFrame"
+    bodyFrame.Size = UDim2.new(1, -20, 1, -54)
+    bodyFrame.Position = UDim2.fromOffset(10, 48)
+    bodyFrame.BackgroundTransparency = 1
+    bodyFrame.Parent = mainFrame
+
+    -- Left Panel: Auto Summon (Dark Crimson Glossy Card)
+    local leftPanel = Instance.new("Frame")
+    leftPanel.Name = "SummonPanel"
+    leftPanel.Size = UDim2.new(0.55, -5, 1, 0)
+    leftPanel.Position = UDim2.fromScale(0, 0)
+    leftPanel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    leftPanel.BorderSizePixel = 0
+    leftPanel.Parent = bodyFrame
+    createCorner(leftPanel, 10)
+    createGradient(leftPanel, Theme.LeftCardTop, Theme.LeftCardBottom, 90)
+    createStroke(leftPanel, Theme.LeftCardStroke, 1.5, 0)
+
+    local summonPill = Instance.new("Frame")
+    summonPill.Size = UDim2.fromOffset(138, 24)
+    summonPill.AnchorPoint = Vector2.new(0.5, 0)
+    summonPill.Position = UDim2.new(0.5, 0, 0, 8)
+    summonPill.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    summonPill.BorderSizePixel = 0
+    summonPill.Parent = leftPanel
+    createCorner(summonPill, 6)
+    createGradient(summonPill, Theme.PillTop, Theme.PillBottom, 90)
+    createStroke(summonPill, Theme.PillStroke, 1, 0.4)
+
+    local summonPillText = Instance.new("TextLabel")
+    summonPillText.Size = UDim2.fromScale(1, 1)
+    summonPillText.BackgroundTransparency = 1
+    summonPillText.Font = Enum.Font.GothamBold
+    summonPillText.TextSize = 12
+    summonPillText.TextColor3 = Theme.TextLight
+    summonPillText.Text = "AUTO SUMMON"
+    summonPillText.Parent = summonPill
+
+    local coinCard = Instance.new("Frame")
+    coinCard.Size = UDim2.new(1, -20, 0, 48)
+    coinCard.Position = UDim2.fromOffset(10, 40)
+    coinCard.BackgroundColor3 = Theme.SlotDark
+    coinCard.BorderSizePixel = 0
+    coinCard.Parent = leftPanel
+    createCorner(coinCard, 7)
+    createStroke(coinCard, Theme.LeftCardStroke, 1, 0.35)
+
+    local coinLabel = Instance.new("TextLabel")
+    coinLabel.Size = UDim2.new(1, -16, 0, 20)
+    coinLabel.Position = UDim2.fromOffset(8, 4)
+    coinLabel.BackgroundTransparency = 1
+    coinLabel.Font = Enum.Font.GothamBold
+    coinLabel.TextSize = 12
+    coinLabel.TextXAlignment = Enum.TextXAlignment.Left
+    coinLabel.TextColor3 = Theme.TextLight
+    coinLabel.Text = "Coins: 0  |  Summoned: 0"
+    coinLabel.Parent = coinCard
+    UI.CoinLabel = coinLabel
+
+    local progressBg = Instance.new("Frame")
+    progressBg.Size = UDim2.new(1, -16, 0, 12)
+    progressBg.Position = UDim2.fromOffset(8, 28)
+    progressBg.BackgroundColor3 = Color3.fromRGB(28, 7, 5)
+    progressBg.BorderSizePixel = 0
+    progressBg.ClipsDescendants = true
+    progressBg.Parent = coinCard
+    createCorner(progressBg, 6)
+
+    local progressFill = Instance.new("Frame")
+    progressFill.Size = UDim2.new(0, 0, 1, 0)
+    progressFill.BackgroundColor3 = Theme.BarFill
+    progressFill.BorderSizePixel = 0
+    progressFill.Parent = progressBg
+    createCorner(progressFill, 6)
+    UI.CoinProgressFill = progressFill
+
+    local rowsContainer = Instance.new("Frame")
+    rowsContainer.Size = UDim2.new(1, -20, 0, 92)
+    rowsContainer.Position = UDim2.fromOffset(10, 96)
+    rowsContainer.BackgroundTransparency = 1
+    rowsContainer.Parent = leftPanel
+
+    local rowsLayout = Instance.new("UIListLayout")
+    rowsLayout.Padding = UDim.new(0, 8)
+    rowsLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    rowsLayout.Parent = rowsContainer
+
+    UI.Row900 = createCheckboxRow(rowsContainer, "900 Summon (10x)", 42, false, function()
+        State.Check900 = not State.Check900
+        refreshUI()
+    end)
+
+    UI.Row100 = createCheckboxRow(rowsContainer, "100 Summon (1x)", 42, false, function()
+        State.Check100 = not State.Check100
+        refreshUI()
+    end)
+
+    local ruleBox = Instance.new("Frame")
+    ruleBox.Size = UDim2.new(1, -20, 0, 32)
+    ruleBox.Position = UDim2.fromOffset(10, 196)
+    ruleBox.BackgroundColor3 = Theme.SlotDark
+    ruleBox.BorderSizePixel = 0
+    ruleBox.Parent = leftPanel
+    createCorner(ruleBox, 6)
+    createStroke(ruleBox, Theme.LeftCardStroke, 1, 0.45)
+
+    local ruleLabel = Instance.new("TextLabel")
+    ruleLabel.Size = UDim2.new(1, -12, 1, 0)
+    ruleLabel.Position = UDim2.fromOffset(6, 0)
+    ruleLabel.BackgroundTransparency = 1
+    ruleLabel.Font = Enum.Font.GothamMedium
+    ruleLabel.TextSize = 11
+    ruleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    ruleLabel.TextColor3 = Theme.TextMuted
+    ruleLabel.Text = "Mode: Idle"
+    ruleLabel.Parent = ruleBox
+    UI.RuleLabel = ruleLabel
+
+    local statusBox = Instance.new("Frame")
+    statusBox.Size = UDim2.new(1, -20, 0, 44)
+    statusBox.Position = UDim2.fromOffset(10, 236)
+    statusBox.BackgroundColor3 = Theme.SlotDark
+    statusBox.BorderSizePixel = 0
+    statusBox.Parent = leftPanel
+    createCorner(statusBox, 6)
+    createStroke(statusBox, Theme.LeftCardStroke, 1, 0.45)
+
+    local statusLabel = Instance.new("TextLabel")
+    statusLabel.Size = UDim2.new(1, -12, 1, -4)
+    statusLabel.Position = UDim2.fromOffset(6, 2)
+    statusLabel.BackgroundTransparency = 1
+    statusLabel.Font = Enum.Font.GothamMedium
+    statusLabel.TextSize = 11
+    statusLabel.TextWrapped = true
+    statusLabel.TextXAlignment = Enum.TextXAlignment.Left
+    statusLabel.TextYAlignment = Enum.TextYAlignment.Center
+    statusLabel.TextColor3 = Theme.TextLight
+    statusLabel.Text = State.WireStatus .. " | " .. State.StatusText
+    statusLabel.Parent = statusBox
+    UI.StatusLabel = statusLabel
+
+    -- Right Panel: Auto Sell (Cream Options Card matching reference image)
+    local rightPanel = Instance.new("Frame")
+    rightPanel.Name = "AutoSellPanel"
+    rightPanel.Size = UDim2.new(0.45, -5, 1, 0)
+    rightPanel.Position = UDim2.new(0.55, 5, 0, 0)
+    rightPanel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    rightPanel.BorderSizePixel = 0
+    rightPanel.Parent = bodyFrame
+    createCorner(rightPanel, 10)
+    createGradient(rightPanel, Theme.CreamTop, Theme.CreamBottom, 90)
+    createStroke(rightPanel, Theme.CreamStroke, 1.5, 0)
+
+    local sellPill = Instance.new("Frame")
+    sellPill.Size = UDim2.fromOffset(124, 24)
+    sellPill.AnchorPoint = Vector2.new(0.5, 0)
+    sellPill.Position = UDim2.new(0.5, 0, 0, 8)
+    sellPill.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    sellPill.BorderSizePixel = 0
+    sellPill.Parent = rightPanel
+    createCorner(sellPill, 6)
+    createGradient(sellPill, Theme.PillTop, Theme.PillBottom, 90)
+    createStroke(sellPill, Theme.PillStroke, 1, 0.4)
+
+    local sellPillText = Instance.new("TextLabel")
+    sellPillText.Size = UDim2.fromScale(1, 1)
+    sellPillText.BackgroundTransparency = 1
+    sellPillText.Font = Enum.Font.GothamBold
+    sellPillText.TextSize = 12
+    sellPillText.TextColor3 = Theme.TextLight
+    sellPillText.Text = "AUTO SELL"
+    sellPillText.Parent = sellPill
+
+    local filterHeader = Instance.new("TextLabel")
+    filterHeader.Size = UDim2.new(1, -18, 0, 16)
+    filterHeader.Position = UDim2.fromOffset(10, 40)
+    filterHeader.BackgroundTransparency = 1
+    filterHeader.Font = Enum.Font.GothamBold
+    filterHeader.TextSize = 10
+    filterHeader.TextXAlignment = Enum.TextXAlignment.Left
+    filterHeader.TextColor3 = Theme.TextDark
+    filterHeader.Text = "SELL ON SUMMON (GAME TIERS)"
+    filterHeader.Parent = rightPanel
+
+    local rarityContainer = Instance.new("Frame")
+    rarityContainer.Size = UDim2.new(1, -18, 0, 190)
+    rarityContainer.Position = UDim2.fromOffset(9, 60)
+    rarityContainer.BackgroundTransparency = 1
+    rarityContainer.Parent = rightPanel
+
+    local rarityLayout = Instance.new("UIListLayout")
+    rarityLayout.Padding = UDim.new(0, 7)
+    rarityLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    rarityLayout.Parent = rarityContainer
+
+    for _, rarityKey in ipairs(RARITY_KEYS) do
+        UI.RarityRows[rarityKey] = createCheckboxRow(rarityContainer, rarityKey, 32, true, function()
+            State.AutoSell[rarityKey] = not State.AutoSell[rarityKey]
+            refreshUI()
+        end)
+    end
+
+    local syncLabel = Instance.new("TextLabel")
+    syncLabel.Size = UDim2.new(1, -18, 0, 20)
+    syncLabel.Position = UDim2.fromOffset(9, 260)
+    syncLabel.BackgroundTransparency = 1
+    syncLabel.Font = Enum.Font.GothamBold
+    syncLabel.TextSize = 11
+    syncLabel.TextXAlignment = Enum.TextXAlignment.Left
+    syncLabel.TextColor3 = Theme.TextDark
+    syncLabel.Text = State.SyncText
+    syncLabel.Parent = rightPanel
+    UI.SyncLabel = syncLabel
+
+    -- Dragging
+    local dragging = false
+    local dragStart = nil
+    local startPos = nil
+
+    trackConn(topBar.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = mainFrame.Position
+        end
+    end))
+
+    trackConn(UserInputService.InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - dragStart
+            mainFrame.Position = UDim2.new(
+                startPos.X.Scale,
+                startPos.X.Offset + delta.X,
+                startPos.Y.Scale,
+                startPos.Y.Offset + delta.Y
+            )
+        end
+    end))
+
+    trackConn(UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = false
+        end
+    end))
+
+    trackConn(UserInputService.InputBegan:Connect(function(input, gp)
+        if not gp and (input.KeyCode == Enum.KeyCode.RightControl or input.KeyCode == Enum.KeyCode.Insert) then
+            mainFrame.Visible = not mainFrame.Visible
+        end
+    end))
+
+    -- Minimize Toggle
+    trackConn(minBtn.Activated:Connect(function()
+        State.Minimized = not State.Minimized
+        bodyFrame.Visible = not State.Minimized
+        topBarBottomCover.Visible = not State.Minimized
+        mainFrame.Size = State.Minimized and UDim2.fromOffset(540, 42) or UDim2.fromOffset(540, 344)
+    end))
+
+    -- Unload
+    trackConn(closeBtn.Activated:Connect(unloadHub))
+
+    ENV.RetroToiletsLobbyHub = {
+        Unload = unloadHub,
+        State = State,
+        GetCharacter = function()
+            return State.CurrentCharacter
+        end,
+    }
+end
+
+-- ============================================================================
+-- 6. SUMMON PRIORITY LOOP (NO AUTO-UNCHECK ON REFUSAL)
+-- ============================================================================
+local function decideSummonAction(coins)
+    local want900 = State.Check900
+    local want100 = State.Check100
+
+    if not want900 and not want100 then
+        return nil, "Idle"
+    end
+
+    if want900 and want100 then
+        if coins >= Config.Cost10x then
+            return "Summon10", "Sending 900 Summon (10x)"
+        elseif coins >= Config.Cost1x then
+            return "Summon1", "Below 900 -> Sending 100 Summon (1x)"
+        else
+            return nil, "Waiting for 100 coins (kept checked)"
+        end
+    elseif want900 then
+        if coins >= Config.Cost10x then
+            return "Summon10", "Sending 900 Summon (10x)"
+        end
+        return nil, "Waiting for 900 coins (kept checked)"
+    else
+        if coins >= Config.Cost1x then
+            return "Summon1", "Sending 100 Summon (1x)"
+        end
+        return nil, "Waiting for 100 coins (kept checked)"
+    end
+end
+
+local function processSummonTick()
+    if State.Unloaded then
+        return
+    end
+
+    if not State.WireReady then
+        local s1 = resolveEventId("Summon1")
+        local s10 = resolveEventId("Summon10")
+        if s1 and s10 then
+            State.WireReady = true
+            State.WireStatus = "Wire OK (" .. s1 .. "/" .. s10 .. ")"
+        else
+            State.StatusText = "Waiting for Summon IDs (kept checked)"
+            return
+        end
+    end
+
+    local eventName, statusMsg = decideSummonAction(State.CurrentCoins)
+    if not eventName then
+        State.StatusText = statusMsg
+        return
+    end
+
+    local now = os.clock()
+    if (now - State.LastSummonSentAt) < Config.SummonInterval then
+        return
+    end
+
+    -- Build clean autoSell table snapshot matching SummonHandler u15 keys
+    local autoSellPayload = {
+        Basic = State.AutoSell.Basic == true,
+        Uncommon = State.AutoSell.Uncommon == true,
+        Rare = State.AutoSell.Rare == true,
+        Epic = State.AutoSell.Epic == true,
+        Legendary = State.AutoSell.Legendary == true,
+    }
+
+    State.LastSummonSentAt = now
+    local sent = fireBridgeEvent(eventName, autoSellPayload)
+    if sent then
+        State.StatusText = statusMsg
+    else
+        -- Never uncheck State.Check900 or State.Check100 if refused or missing
+        State.StatusText = "Refused / Retrying (kept checked)"
+    end
+end
+
+-- ============================================================================
+-- 7. STARTUP & HEARTBEAT POLLING (PRE-ALLOCATED TIMERS)
+-- ============================================================================
+buildUI()
+initNetworkWire()
+bindGameAutoSellUI()
+State.CurrentCoins = readCoins()
+refreshUI()
+
+trackConn(RunService.Heartbeat:Connect(function(dt)
+    if State.Unloaded then
+        return
+    end
+
+    LoopTimers.SyncElapsed += dt
+    LoopTimers.SummonElapsed += dt
+
+    if LoopTimers.SyncElapsed >= Config.SyncInterval then
+        LoopTimers.SyncElapsed = 0
+        State.CurrentCoins = readCoins()
+        if next(GameSyncHooks) == nil then
+            bindGameAutoSellUI()
+        end
+        refreshUI()
+    end
+
+    if LoopTimers.SummonElapsed >= Config.SummonInterval then
+        LoopTimers.SummonElapsed = 0
+        if State.Check900 or State.Check100 then
+            processSummonTick()
+            refreshUI()
+        end
+    end
+end))
