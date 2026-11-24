@@ -1,1 +1,2483 @@
+wait(5)
 
+-- ============================================================================
+-- LEGACY _ Game (131703399727686) // SAFE MACRO & REPLAY HUB
+-- Features: Safe Direct Wire | Place | Upgrade | Sell | Replay | Skip | PlayAgain
+-- ============================================================================
+
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+
+local S = {
+    Players = game:GetService("Players"),
+    ReplicatedStorage = game:GetService("ReplicatedStorage"),
+    RunService = game:GetService("RunService"),
+    TweenService = game:GetService("TweenService"),
+    UserInputService = game:GetService("UserInputService"),
+    HttpService = game:GetService("HttpService"),
+    VirtualUser = game:GetService("VirtualUser"),
+    VirtualInputManager = game:GetService("VirtualInputManager"),
+    GuiService = game:GetService("GuiService"),
+    CoreGui = game:GetService("CoreGui"),
+}
+
+local ENV = (getgenv and getgenv()) or _G
+if ENV.LegacyTDMacroHub then
+    pcall(function() ENV.LegacyTDMacroHub:Unload() end)
+end
+
+local Controller = {
+    Running = true,
+    Connections = {},
+    BridgeConnections = {},
+    Threads = {},
+}
+ENV.LegacyTDMacroHub = Controller
+
+-- ============================================================================
+-- 1. FIXED EMBEDDED HASH (REPAIRED PRIME SIEVE - ZERO FREEZE)
+-- ============================================================================
+local Hash = (function()
+    local bit32_band, bit32_bxor = bit32.band, bit32.bxor
+    local bit32_lshift, bit32_rshift = bit32.lshift, bit32.rshift
+    local u4, u5, v6, v7, u8, u9, u12 = {}, {}, {}, {}, {}, {}, {}
+    local v13, v14, v15 = v7, v6, 4
+    local v16 = { 4, 1, 2, -2, 2 }
+
+    local function sha512_feed_128(p17, p18, p19, p20, p21)
+        local v22, v23, v24 = u12, u4, u5
+        local v25, v26, v27, v28, v29, v30, v31, v32 = p17[1], p17[2], p17[3], p17[4], p17[5], p17[6], p17[7], p17[8]
+        local v33, v34, v35, v36, v37, v38, v39, v40 = p18[1], p18[2], p18[3], p18[4], p18[5], p18[6], p18[7], p18[8]
+        for i = p20, p20 + p21 - 1, 128 do
+            local v42 = i
+            for i2 = 1, 32 do
+                v42 += 4
+                local b1, b2, b3, b4 = string.byte(p19, v42 - 3, v42)
+                v22[i2] = ((b1 * 256 + b2) * 256 + b3) * 256 + b4
+            end
+            for i2 = 34, 160, 2 do
+                local v47, v48, v49, v50 = v22[i2 - 30], v22[i2 - 31], v22[i2 - 4], v22[i2 - 5]
+                local v51 = bit32_bxor(bit32_rshift(v47, 1) + bit32_lshift(v48, 31), bit32_rshift(v47, 8) + bit32_lshift(v48, 24), bit32_rshift(v47, 7) + bit32_lshift(v48, 25)) % 4294967296
+                    + bit32_bxor(bit32_rshift(v49, 19) + bit32_lshift(v50, 13), bit32_lshift(v49, 3) + bit32_rshift(v50, 29), bit32_rshift(v49, 6) + bit32_lshift(v50, 26)) % 4294967296
+                    + v22[i2 - 14] + v22[i2 - 32]
+                local v52 = v51 % 4294967296
+                v22[i2 - 1] = bit32_bxor(bit32_rshift(v48, 1) + bit32_lshift(v47, 31), bit32_rshift(v48, 8) + bit32_lshift(v47, 24), bit32_rshift(v48, 7))
+                    + bit32_bxor(bit32_rshift(v50, 19) + bit32_lshift(v49, 13), bit32_lshift(v50, 3) + bit32_rshift(v49, 29), bit32_rshift(v50, 6))
+                    + v22[i2 - 15] + v22[i2 - 33] + (v51 - v52) / 4294967296
+                v22[i2] = v52
+            end
+            local v53, v54, v55, v56, v57, v58, v59, v60 = v33, v27, v31, v29, v39, v37, v34, v35
+            local v61, v62, v63, v64, v65, v66, v67, v68 = v32, v26, v25, v28, v30, v40, v38, v36
+            for i2 = 1, 80 do
+                local v69 = i2 * 2
+                local v70 = bit32_bxor(bit32_rshift(v29, 14) + bit32_lshift(v37, 18), bit32_rshift(v29, 18) + bit32_lshift(v37, 14), bit32_lshift(v29, 23) + bit32_rshift(v37, 9)) % 4294967296
+                    + (bit32_band(v29, v30) + bit32_band(-1 - v29, v31)) % 4294967296 + v32 + v23[i2] + v22[v69]
+                local v71 = v70 % 4294967296
+                local v72 = bit32_bxor(bit32_rshift(v37, 14) + bit32_lshift(v29, 18), bit32_rshift(v37, 18) + bit32_lshift(v29, 14), bit32_lshift(v37, 23) + bit32_rshift(v29, 9))
+                    + bit32_band(v37, v38) + bit32_band(-1 - v37, v39) + v40 + v24[i2] + v22[v69 - 1] + (v70 - v71) / 4294967296
+                local v73 = v71 + v28
+                local v74 = v73 % 4294967296
+                local v75 = v72 + v36 + (v73 - v74) / 4294967296
+                local v76 = v71 + (bit32_band(v27, v26) + bit32_band(v25, bit32_bxor(v27, v26))) % 4294967296
+                    + bit32_bxor(bit32_rshift(v25, 28) + bit32_lshift(v33, 4), bit32_lshift(v25, 30) + bit32_rshift(v33, 2), bit32_lshift(v25, 25) + bit32_rshift(v33, 7)) % 4294967296
+                local v77 = v76 % 4294967296
+                local v78 = v72 + (bit32_band(v35, v34) + bit32_band(v33, bit32_bxor(v35, v34)))
+                    + bit32_bxor(bit32_rshift(v33, 28) + bit32_lshift(v25, 4), bit32_lshift(v33, 30) + bit32_rshift(v25, 2), bit32_lshift(v33, 25) + bit32_rshift(v25, 7)) + (v76 - v77) / 4294967296
+                v32, v31, v30, v29 = v31, v30, v29, v74
+                v36, v35, v34, v33 = v35, v34, v33, v78
+                v28, v27, v26, v25 = v27, v26, v25, v77
+                v40, v39, v38, v37 = v39, v38, v37, v75
+            end
+            local v79 = v63 + v25; v25 = v79 % 4294967296; v33 = (v53 + v33 + (v79 - v25) / 4294967296) % 4294967296
+            local v80 = v62 + v26; v26 = v80 % 4294967296; v34 = (v59 + v34 + (v80 - v26) / 4294967296) % 4294967296
+            local v81 = v54 + v27; v27 = v81 % 4294967296; v35 = (v60 + v35 + (v81 - v27) / 4294967296) % 4294967296
+            local v82 = v64 + v28; v28 = v82 % 4294967296; v36 = (v68 + v36 + (v82 - v28) / 4294967296) % 4294967296
+            local v83 = v56 + v29; v29 = v83 % 4294967296; v37 = (v58 + v37 + (v83 - v29) / 4294967296) % 4294967296
+            local v84 = v65 + v30; v30 = v84 % 4294967296; v38 = (v67 + v38 + (v84 - v30) / 4294967296) % 4294967296
+            local v85 = v55 + v31; v31 = v85 % 4294967296; v39 = (v57 + v39 + (v85 - v31) / 4294967296) % 4294967296
+            local v86 = v61 + v32; v32 = v86 % 4294967296; v40 = (v66 + v40 + (v86 - v32) / 4294967296) % 4294967296
+        end
+        p17[1], p17[2], p17[3], p17[4], p17[5], p17[6], p17[7], p17[8] = v25, v26, v27, v28, v29, v30, v31, v32
+        p18[1], p18[2], p18[3], p18[4], p18[5], p18[6], p18[7], p18[8] = v33, v34, v35, v36, v37, v38, v39, v40
+    end
+
+    local u117 = { [384] = {}, [512] = v6 }
+    local v118, v119 = { 1 }, 0
+
+    local function keccak_feed(p120, p121, p122, p123, p124, p125)
+        local v126, v127, v128 = u8, u9, p125 / 8
+        for i = p123, p123 + p124 - 1, p125 do
+            local v130 = i
+            for i2 = 1, v128 do
+                local b1, b2, b3, b4 = string.byte(p122, v130 + 1, v130 + 4)
+                p120[i2] = bit32_bxor(p120[i2], ((b4 * 256 + b3) * 256 + b2) * 256 + b1)
+                v130 += 8
+                local b5, b6, b7, b8 = string.byte(p122, v130 - 3, v130)
+                p121[i2] = bit32_bxor(p121[i2], ((b8 * 256 + b7) * 256 + b6) * 256 + b5)
+            end
+            local v138, v139 = p120[1], p121[1]
+            local v140, v141 = p120[2], p121[2]
+            local v142, v143 = p120[3], p121[3]
+            local v144, v145 = p120[4], p121[4]
+            local v146, v147 = p120[5], p121[5]
+            local v148, v149 = p120[6], p121[6]
+            local v150, v151 = p120[7], p121[7]
+            local v152, v153 = p120[8], p121[8]
+            local v154, v155 = p120[9], p121[9]
+            local v156, v157 = p120[10], p121[10]
+            local v158, v159 = p120[11], p121[11]
+            local v160, v161 = p120[12], p121[12]
+            local v162, v163 = p120[13], p121[13]
+            local v164, v165 = p120[14], p121[14]
+            local v166, v167 = p120[15], p121[15]
+            local v168, v169 = p120[16], p121[16]
+            local v170, v171 = p120[17], p121[17]
+            local v172, v173 = p120[18], p121[18]
+            local v174, v175 = p120[19], p121[19]
+            local v176, v177 = p120[20], p121[20]
+            local v178, v179 = p120[21], p121[21]
+            local v180, v181 = p120[22], p121[22]
+            local v182, v183 = p120[23], p121[23]
+            local v184, v185 = p120[24], p121[24]
+            local v186, v187 = p120[25], p121[25]
+            for i2 = 1, 24 do
+                local v188 = bit32_bxor(v138, v148, v158, v168, v178)
+                local v189 = bit32_bxor(v139, v149, v159, v169, v179)
+                local v190 = bit32_bxor(v140, v150, v160, v170, v180)
+                local v191 = bit32_bxor(v141, v151, v161, v171, v181)
+                local v192 = bit32_bxor(v142, v152, v162, v172, v182)
+                local v193 = bit32_bxor(v143, v153, v163, v173, v183)
+                local v194 = bit32_bxor(v144, v154, v164, v174, v184)
+                local v195 = bit32_bxor(v145, v155, v165, v175, v185)
+                local v196 = bit32_bxor(v146, v156, v166, v176, v186)
+                local v197 = bit32_bxor(v147, v157, v167, v177, v187)
+                local v198 = bit32_bxor(v188, v192 * 2 + (v193 % 4294967296 - v193 % 2147483648) / 2147483648)
+                local v199 = bit32_bxor(v189, v193 * 2 + (v192 % 4294967296 - v192 % 2147483648) / 2147483648)
+                local v200, v201 = bit32_bxor(v198, v140), bit32_bxor(v199, v141)
+                local v202, v203 = bit32_bxor(v198, v150), bit32_bxor(v199, v151)
+                local v204, v205 = bit32_bxor(v198, v160), bit32_bxor(v199, v161)
+                local v206, v207 = bit32_bxor(v198, v170), bit32_bxor(v199, v171)
+                local v208, v209 = bit32_bxor(v198, v180), bit32_bxor(v199, v181)
+                local v210 = (v202 % 4294967296 - v202 % 1048576) / 1048576 + v203 * 4096
+                local v211 = (v203 % 4294967296 - v203 % 1048576) / 1048576 + v202 * 4096
+                local v212 = (v206 % 4294967296 - v206 % 524288) / 524288 + v207 * 8192
+                local v213 = (v207 % 4294967296 - v207 % 524288) / 524288 + v206 * 8192
+                local v214 = v200 * 2 + (v201 % 4294967296 - v201 % 2147483648) / 2147483648
+                local v215 = v201 * 2 + (v200 % 4294967296 - v200 % 2147483648) / 2147483648
+                local v216 = v204 * 1024 + (v205 % 4294967296 - v205 % 4194304) / 4194304
+                local v217 = v205 * 1024 + (v204 % 4294967296 - v204 % 4194304) / 4194304
+                local v218 = v208 * 4 + (v209 % 4294967296 - v209 % 1073741824) / 1073741824
+                local v219 = v209 * 4 + (v208 % 4294967296 - v208 % 1073741824) / 1073741824
+                local v220 = bit32_bxor(v190, v194 * 2 + (v195 % 4294967296 - v195 % 2147483648) / 2147483648)
+                local v221 = bit32_bxor(v191, v195 * 2 + (v194 % 4294967296 - v194 % 2147483648) / 2147483648)
+                local v222, v223 = bit32_bxor(v220, v142), bit32_bxor(v221, v143)
+                local v224, v225 = bit32_bxor(v220, v152), bit32_bxor(v221, v153)
+                local v226, v227 = bit32_bxor(v220, v162), bit32_bxor(v221, v163)
+                local v228, v229 = bit32_bxor(v220, v172), bit32_bxor(v221, v173)
+                local v230, v231 = bit32_bxor(v220, v182), bit32_bxor(v221, v183)
+                local v232 = (v226 % 4294967296 - v226 % 2097152) / 2097152 + v227 * 2048
+                local v233 = (v227 % 4294967296 - v227 % 2097152) / 2097152 + v226 * 2048
+                local v234 = (v230 % 4294967296 - v230 % 8) / 8 + v231 * 536870912 % 4294967296
+                local v235 = (v231 % 4294967296 - v231 % 8) / 8 + v230 * 536870912 % 4294967296
+                local v236 = v224 * 64 + (v225 % 4294967296 - v225 % 67108864) / 67108864
+                local v237 = v225 * 64 + (v224 % 4294967296 - v224 % 67108864) / 67108864
+                local v238 = v228 * 32768 + (v229 % 4294967296 - v229 % 131072) / 131072
+                local v239 = v229 * 32768 + (v228 % 4294967296 - v228 % 131072) / 131072
+                local v240 = (v222 % 4294967296 - v222 % 4) / 4 + v223 * 1073741824 % 4294967296
+                local v241 = (v223 % 4294967296 - v223 % 4) / 4 + v222 * 1073741824 % 4294967296
+                local v242 = bit32_bxor(v192, v196 * 2 + (v197 % 4294967296 - v197 % 2147483648) / 2147483648)
+                local v243 = bit32_bxor(v193, v197 * 2 + (v196 % 4294967296 - v196 % 2147483648) / 2147483648)
+                local v244, v245 = bit32_bxor(v242, v144), bit32_bxor(v243, v145)
+                local v246, v247 = bit32_bxor(v242, v154), bit32_bxor(v243, v155)
+                local v248, v249 = bit32_bxor(v242, v164), bit32_bxor(v243, v165)
+                local v250, v251 = bit32_bxor(v242, v174), bit32_bxor(v243, v175)
+                local v252, v253 = bit32_bxor(v242, v184), bit32_bxor(v243, v185)
+                local v254 = v250 * 2097152 % 4294967296 + (v251 % 4294967296 - v251 % 2048) / 2048
+                local v255 = v251 * 2097152 % 4294967296 + (v250 % 4294967296 - v250 % 2048) / 2048
+                local v256 = v244 * 268435456 % 4294967296 + (v245 % 4294967296 - v245 % 16) / 16
+                local v257 = v245 * 268435456 % 4294967296 + (v244 % 4294967296 - v244 % 16) / 16
+                local v258 = v248 * 33554432 % 4294967296 + (v249 % 4294967296 - v249 % 128) / 128
+                local v259 = v249 * 33554432 % 4294967296 + (v248 % 4294967296 - v248 % 128) / 128
+                local v260 = (v252 % 4294967296 - v252 % 256) / 256 + v253 * 16777216 % 4294967296
+                local v261 = (v253 % 4294967296 - v253 % 256) / 256 + v252 * 16777216 % 4294967296
+                local v262 = (v246 % 4294967296 - v246 % 512) / 512 + v247 * 8388608 % 4294967296
+                local v263 = (v247 % 4294967296 - v247 % 512) / 512 + v246 * 8388608 % 4294967296
+                local v264 = bit32_bxor(v194, v188 * 2 + (v189 % 4294967296 - v189 % 2147483648) / 2147483648)
+                local v265 = bit32_bxor(v195, v189 * 2 + (v188 % 4294967296 - v188 % 2147483648) / 2147483648)
+                local v266, v267 = bit32_bxor(v264, v146), bit32_bxor(v265, v147)
+                local v268, v269 = bit32_bxor(v264, v156), bit32_bxor(v265, v157)
+                local v270, v271 = bit32_bxor(v264, v166), bit32_bxor(v265, v167)
+                local v272, v273 = bit32_bxor(v264, v176), bit32_bxor(v265, v177)
+                local v274, v275 = bit32_bxor(v264, v186), bit32_bxor(v265, v187)
+                local v276 = v274 * 16384 + (v275 % 4294967296 - v275 % 262144) / 262144
+                local v277 = v275 * 16384 + (v274 % 4294967296 - v274 % 262144) / 262144
+                local v278 = v268 * 1048576 % 4294967296 + (v269 % 4294967296 - v269 % 4096) / 4096
+                local v279 = v269 * 1048576 % 4294967296 + (v268 % 4294967296 - v268 % 4096) / 4096
+                local v280 = v272 * 256 + (v273 % 4294967296 - v273 % 16777216) / 16777216
+                local v281 = v273 * 256 + (v272 % 4294967296 - v272 % 16777216) / 16777216
+                local v282 = v266 * 134217728 % 4294967296 + (v267 % 4294967296 - v267 % 32) / 32
+                local v283 = v267 * 134217728 % 4294967296 + (v266 % 4294967296 - v266 % 32) / 32
+                local v284 = (v270 % 4294967296 - v270 % 33554432) / 33554432 + v271 * 128
+                local v285 = (v271 % 4294967296 - v271 % 33554432) / 33554432 + v270 * 128
+                local v286 = bit32_bxor(v196, v190 * 2 + (v191 % 4294967296 - v191 % 2147483648) / 2147483648)
+                local v287 = bit32_bxor(v197, v191 * 2 + (v190 % 4294967296 - v190 % 2147483648) / 2147483648)
+                local v288, v289 = bit32_bxor(v286, v148), bit32_bxor(v287, v149)
+                local v290, v291 = bit32_bxor(v286, v158), bit32_bxor(v287, v159)
+                local v292, v293 = bit32_bxor(v286, v168), bit32_bxor(v287, v169)
+                local v294, v295 = bit32_bxor(v286, v178), bit32_bxor(v287, v179)
+                local v296 = v290 * 8 + (v291 % 4294967296 - v291 % 536870912) / 536870912
+                local v297 = v291 * 8 + (v290 % 4294967296 - v290 % 536870912) / 536870912
+                local v298 = v294 * 262144 + (v295 % 4294967296 - v295 % 16384) / 16384
+                local v299 = v295 * 262144 + (v294 % 4294967296 - v294 % 16384) / 16384
+                local v300 = (v288 % 4294967296 - v288 % 268435456) / 268435456 + v289 * 16
+                local v301 = (v289 % 4294967296 - v289 % 268435456) / 268435456 + v288 * 16
+                local v302 = (v292 % 4294967296 - v292 % 8388608) / 8388608 + v293 * 512
+                local v303 = (v293 % 4294967296 - v293 % 8388608) / 8388608 + v292 * 512
+                local v304, v305 = bit32_bxor(v286, v138), bit32_bxor(v287, v139)
+                local v306 = bit32_bxor(v304, bit32_band(-1 - v210, v232))
+                v140 = bit32_bxor(v210, bit32_band(-1 - v232, v254))
+                v142 = bit32_bxor(v232, bit32_band(-1 - v254, v276))
+                v144 = bit32_bxor(v254, bit32_band(-1 - v276, v304))
+                v146 = bit32_bxor(v276, bit32_band(-1 - v304, v210))
+                local v307 = bit32_bxor(v305, bit32_band(-1 - v211, v233))
+                v141 = bit32_bxor(v211, bit32_band(-1 - v233, v255))
+                v143 = bit32_bxor(v233, bit32_band(-1 - v255, v277))
+                v145 = bit32_bxor(v255, bit32_band(-1 - v277, v305))
+                v147 = bit32_bxor(v277, bit32_band(-1 - v305, v211))
+                v148 = bit32_bxor(v256, bit32_band(-1 - v278, v296))
+                v150 = bit32_bxor(v278, bit32_band(-1 - v296, v212))
+                v152 = bit32_bxor(v296, bit32_band(-1 - v212, v234))
+                v154 = bit32_bxor(v212, bit32_band(-1 - v234, v256))
+                v156 = bit32_bxor(v234, bit32_band(-1 - v256, v278))
+                v149 = bit32_bxor(v257, bit32_band(-1 - v279, v297))
+                v151 = bit32_bxor(v279, bit32_band(-1 - v297, v213))
+                v153 = bit32_bxor(v297, bit32_band(-1 - v213, v235))
+                v155 = bit32_bxor(v213, bit32_band(-1 - v235, v257))
+                v157 = bit32_bxor(v235, bit32_band(-1 - v257, v279))
+                v158 = bit32_bxor(v214, bit32_band(-1 - v236, v258))
+                v160 = bit32_bxor(v236, bit32_band(-1 - v258, v280))
+                v162 = bit32_bxor(v258, bit32_band(-1 - v280, v298))
+                v164 = bit32_bxor(v280, bit32_band(-1 - v298, v214))
+                v166 = bit32_bxor(v298, bit32_band(-1 - v214, v236))
+                v159 = bit32_bxor(v215, bit32_band(-1 - v237, v259))
+                v161 = bit32_bxor(v237, bit32_band(-1 - v259, v281))
+                v163 = bit32_bxor(v259, bit32_band(-1 - v281, v299))
+                v165 = bit32_bxor(v281, bit32_band(-1 - v299, v215))
+                v167 = bit32_bxor(v299, bit32_band(-1 - v215, v237))
+                v168 = bit32_bxor(v282, bit32_band(-1 - v300, v216))
+                v170 = bit32_bxor(v300, bit32_band(-1 - v216, v238))
+                v172 = bit32_bxor(v216, bit32_band(-1 - v238, v260))
+                v174 = bit32_bxor(v238, bit32_band(-1 - v260, v282))
+                v176 = bit32_bxor(v260, bit32_band(-1 - v282, v300))
+                v169 = bit32_bxor(v283, bit32_band(-1 - v301, v217))
+                v171 = bit32_bxor(v301, bit32_band(-1 - v217, v239))
+                v173 = bit32_bxor(v217, bit32_band(-1 - v239, v261))
+                v175 = bit32_bxor(v239, bit32_band(-1 - v261, v283))
+                v177 = bit32_bxor(v261, bit32_band(-1 - v283, v301))
+                v178 = bit32_bxor(v240, bit32_band(-1 - v262, v284))
+                v180 = bit32_bxor(v262, bit32_band(-1 - v284, v302))
+                v182 = bit32_bxor(v284, bit32_band(-1 - v302, v218))
+                v184 = bit32_bxor(v302, bit32_band(-1 - v218, v240))
+                v186 = bit32_bxor(v218, bit32_band(-1 - v240, v262))
+                v179 = bit32_bxor(v241, bit32_band(-1 - v263, v285))
+                v181 = bit32_bxor(v263, bit32_band(-1 - v285, v303))
+                v183 = bit32_bxor(v285, bit32_band(-1 - v303, v219))
+                v185 = bit32_bxor(v303, bit32_band(-1 - v219, v241))
+                v187 = bit32_bxor(v219, bit32_band(-1 - v241, v263))
+                v138 = bit32_bxor(v306, v126[i2])
+                v139 = v307 + v127[i2]
+            end
+            p120[1], p121[1] = v138, v139
+            p120[2], p121[2] = v140, v141
+            p120[3], p121[3] = v142, v143
+            p120[4], p121[4] = v144, v145
+            p120[5], p121[5] = v146, v147
+            p120[6], p121[6] = v148, v149
+            p120[7], p121[7] = v150, v151
+            p120[8], p121[8] = v152, v153
+            p120[9], p121[9] = v154, v155
+            p120[10], p121[10] = v156, v157
+            p120[11], p121[11] = v158, v159
+            p120[12], p121[12] = v160, v161
+            p120[13], p121[13] = v162, v163
+            p120[14], p121[14] = v164, v165
+            p120[15], p121[15] = v166, v167
+            p120[16], p121[16] = v168, v169
+            p120[17], p121[17] = v170, v171
+            p120[18], p121[18] = v172, v173
+            p120[19], p121[19] = v174, v175
+            p120[20], p121[20] = v176, v177
+            p120[21], p121[21] = v178, v179
+            p120[22], p121[22] = v180, v181
+            p120[23], p121[23] = v182, v183
+            p120[24], p121[24] = v184, v185
+            p120[25], p121[25] = v186, v187
+        end
+    end
+
+    local u369 = { [384] = {}, [512] = v7 }
+    local function mul(p370, p371, p372, p373)
+        local t = table.create(p373)
+        local v374, v375, v376 = 0, 1, 0
+        for i = 1, p373 do
+            for i2 = math.max(1, i + 1 - #p371), math.min(i, #p370) do
+                v374 += p372 * p370[i2] * p371[i + 1 - i2]
+            end
+            local v378 = v374 % 16777216
+            t[i] = v378 - v378 % 1
+            v374 = (v374 - v378) / 16777216
+            v376 += v378 * v375
+            v375 *= 16777216
+        end
+        return t, v376
+    end
+
+    local u379 = { [224] = {}, [256] = v7 }
+    while true do
+        v15 += v16[v15 % 6]
+        local v380, isPrime = 1, false
+        repeat
+            v380 += v16[v380 % 6]
+            if v15 < v380 * v380 then
+                isPrime = true
+                break
+            end
+        until v15 % v380 == 0
+
+        if isPrime then
+            local v381 = v15 ^ (1 / 3)
+            local v382 = v381 * 1099511627776
+            local v383 = mul(table.create(1, v382 - v382 % 1), v118, 1, 2)
+            local _, v384 = mul(v383, mul(v383, v383, 1, 4), -1, 4)
+            local v385 = v383[2] % 65536 * 65536 + math.floor(v383[1] / 256)
+            local v386 = v383[1] % 256 * 16777216 + math.floor(v384 * 4.625929269271485e-18 * v381 / v15)
+
+            if v119 < 16 then
+                local math_sqrt_ret = math.sqrt(v15)
+                local v387 = math_sqrt_ret * 1099511627776
+                local v388 = mul(table.create(1, v387 - v387 % 1), v118, 1, 2)
+                local _, v389 = mul(v388, v388, -1, 2)
+                local v390 = v388[2] % 65536 * 65536 + math.floor(v388[1] / 256)
+                local v391 = v388[1] % 256 * 16777216 + math.floor(v389 * 7.62939453125e-6 / math_sqrt_ret)
+                local v392 = v119 % 8 + 1
+                u379[224][v392] = v391
+                v7[v392] = v390
+                v6[v392] = v391
+                if v392 > 7 then
+                    v7 = u369[384]
+                    v6 = u117[384]
+                end
+            end
+
+            v119 += 1
+            u5[v119] = v385
+            u4[v119] = v386 % 4294967296
+            if v119 > 79 then
+                break
+            end
+        end
+    end
+
+    for i = 224, 256, 32 do
+        local v394, v395 = {}, {}
+        for i2 = 1, 8 do
+            v394[i2] = bit32_bxor(v14[i2], 2779096485) % 4294967296
+            v395[i2] = bit32_bxor(v13[i2], 2779096485) % 4294967296
+        end
+        sha512_feed_128(v394, v395, "SHA-512/" .. tostring(i) .. "\128" .. string.rep("\0", 115) .. "X", 0, 128)
+        u117[i] = v394
+        u369[i] = v395
+    end
+
+    local u398 = 29
+    for i = 1, 24 do
+        local v401, v402 = nil, 0
+        for _ = 1, 6 do
+            v401 = v401 and v401 * v401 * 2 or 1
+            local v403 = u398 % 2
+            u398 = bit32_bxor((u398 - v403) / 2, v403 * 142)
+            v402 += v403 * v401
+        end
+        local v404 = u398 % 2
+        u398 = bit32_bxor((u398 - v404) / 2, v404 * 142)
+        u9[i] = v404 * v401
+        u8[i] = v402
+    end
+
+    local function sha512ext(bits, msg)
+        local totalBytes, buf = 0, ""
+        local hLo = table.pack(table.unpack(u117[bits]))
+        local hHi = table.pack(table.unpack(u369[bits]))
+        local function feed(chunk)
+            if not chunk then
+                if buf then
+                    local t = table.create(3)
+                    t[1], t[2], t[3] = buf, "\128", string.rep("\0", (-17 - totalBytes) % 128 + 9)
+                    buf = nil
+                    totalBytes *= 1.1102230246251565e-16
+                    for i = 4, 10 do
+                        totalBytes = totalBytes % 1 * 256
+                        t[i] = string.char(totalBytes - totalBytes % 1)
+                    end
+                    local tail = table.concat(t)
+                    sha512_feed_128(hLo, hHi, tail, 0, #tail)
+                    local nWords = math.ceil(bits / 64)
+                    for i = 1, nWords do
+                        hLo[i] = string.format("%08x", hHi[i] % 4294967296) .. string.format("%08x", hLo[i] % 4294967296)
+                    end
+                    hHi = nil
+                    hLo = string.sub(table.concat(hLo, "", 1, nWords), 1, bits / 4)
+                end
+                return hLo
+            end
+            local len = #chunk
+            totalBytes += len
+            local offset = 0
+            if buf ~= "" and #buf + len >= 128 then
+                offset = 128 - #buf
+                sha512_feed_128(hLo, hHi, buf .. string.sub(chunk, 1, offset), 0, 128)
+                buf = ""
+            end
+            local rem = len - offset
+            local mod = rem % 128
+            sha512_feed_128(hLo, hHi, chunk, offset, rem - mod)
+            buf ..= string.sub(chunk, len + 1 - mod)
+            return feed
+        end
+        return feed(msg)()
+    end
+
+    local function keccak(blockSize, digestBytes, isShake, msg)
+        local stLo, stHi = table.create(25, 0), table.create(25, 0)
+        local len = #msg
+        local mod = len % blockSize
+        keccak_feed(stLo, stHi, msg, 0, len - mod, blockSize)
+        local buf = string.sub(msg, len + 1 - mod)
+        local pad = isShake and 31 or 6
+        local padded = buf .. ((#buf + 1 == blockSize) and string.char(pad + 128) or (string.char(pad) .. string.rep("\0", (-2 - #buf) % blockSize) .. "\128"))
+        keccak_feed(stLo, stHi, padded, 0, #padded, blockSize)
+        local qIdx, qCap, qBuf = 0, math.floor(blockSize / 8), {}
+        local function getQWords(n)
+            if qCap <= qIdx then
+                keccak_feed(stLo, stHi, "\0\0\0\0\0\0\0\0", 0, 8, 8)
+                qIdx = 0
+            end
+            local count = math.floor(math.min(n, qCap - qIdx))
+            for i = 1, count do
+                qBuf[i] = string.format("%08x", stHi[qIdx + i] % 4294967296) .. string.format("%08x", stLo[qIdx + i] % 4294967296)
+            end
+            qIdx += count
+            return string.gsub(table.concat(qBuf, "", 1, count), "(..)(..)(..)(..)(..)(..)(..)(..)", "%8%7%6%5%4%3%2%1"), count * 8
+        end
+        local outParts, left, nParts = {}, digestBytes, 0
+        while left >= 8 do
+            local chunk, taken = getQWords(left / 8)
+            nParts += 1
+            outParts[nParts] = chunk
+            left -= taken
+        end
+        if left > 0 then
+            local tail = getQWords(1)
+            nParts += 1
+            outParts[nParts] = string.sub(tail, 1, left * 2)
+        end
+        return table.concat(outParts, "", 1, nParts)
+    end
+
+    return {
+        sha512_224 = function(str) return sha512ext(224, str) end,
+        sha512_256 = function(str) return sha512ext(256, str) end,
+        sha3_224 = function(str) return keccak(144, 28, false, str) end,
+    }
+end)()
+
+-- ============================================================================
+-- 2. STATE, CONFIG & DATA MODULES
+-- ============================================================================
+local ROTATIONS = { 0, -45, -90, -135, 180, 135, 90, 45 }
+local DIFFICULTIES = { "Easy", "Medium", "Hard", "Nightmare", "Endless", "Halloween", "Thanksgiving" }
+local TIMING_MODES = { "From Macro", "Full", "Only Sell", "Cash Only" }
+local END_ACTIONS = { "PlayAgain", "Lobby", "None" }
+
+local CHAR_PARTS = {
+    "Head", "UpperTorso", "LowerTorso", "LeftFoot", "LeftLowerLeg", "LeftUpperLeg",
+    "RightFoot", "RightLowerLeg", "RightUpperLeg", "LeftHand", "LeftLowerArm",
+    "LeftUpperArm", "RightHand", "RightLowerArm", "RightUpperArm",
+    "HumanoidRootPart", "Left Arm", "Left Leg", "Right Arm", "Right Leg", "Torso"
+}
+
+local State = {
+    LocalPlayer = S.Players.LocalPlayer or S.Players.PlayerAdded:Wait(),
+    TroopDatas = nil,
+    TroopsLimitGroups = nil,
+    MapDatas = nil,
+    DataRemote = nil,
+    IdStorage = nil,
+    NilIdentifier = "B",
+    MatchGuidObj = nil,
+    GameTimeValObj = nil,
+    HashCache = {},
+    HashCacheGuid = "",
+    HashCacheTime = -1,
+    OutboundQueue = {},
+    InboundHandlers = {},
+    EquippedTroops = {},
+    StepsDirty = true,
+    FileListDirty = true,
+    MatchEnded = false,
+    EndActionSentForMatch = false,
+    MatchFinishShownAt = nil,
+    LastKnownWave = -1,
+    LastKnownTimer = -1,
+    MatchStartClock = os.clock(),
+    LastRecordedMatchTime = 0,
+    LastActionClock = 0,
+    BridgeStatusText = "Checking...",
+    Timers = {
+        Vote = 0,
+        SkipWave = 0,
+        EndAction = 0,
+        EqSync = 0,
+    },
+    GroundRayParams = RaycastParams.new(),
+    SnapRayParams = RaycastParams.new(),
+    TooNearOverlap = OverlapParams.new(),
+}
+
+State.GroundRayParams.FilterType = Enum.RaycastFilterType.Exclude
+State.SnapRayParams.FilterType = Enum.RaycastFilterType.Exclude
+State.TooNearOverlap.FilterType = Enum.RaycastFilterType.Include
+State.TooNearOverlap.CollisionGroup = "Raycasts"
+
+local ROOT_FOLDER = "LegacyTTD_Macro"
+local MACRO_FOLDER = ROOT_FOLDER .. "/Macros"
+local CONFIG_FILE = ROOT_FOLDER .. "/config.json"
+
+local DefaultConfig = {
+    SelectedMacro = "Default",
+    AutoPlayMacro = true,
+    SafePacing = true,
+    RecordOnlySellTimed = false,
+    PlaybackTimingOverride = "From Macro",
+    WaitIfStunned = true,
+    AutoVoteDifficulty = true,
+    AutoDetectEventDiff = true,
+    TargetDifficulty = "Nightmare",
+    AutoSkipWaves = true,
+    AutoSkipIntermission = true,
+    AutoEndAction = "PlayAgain",
+    AutoEndDelay = 1.5,
+    AntiAFK = true,
+}
+
+local Config = table.clone(DefaultConfig)
+
+local MacroState = {
+    IsRecording = false,
+    IsPlaying = false,
+    TimingMode = "Full",
+    CurrentStep = 1,
+    Steps = {},
+    SoldUnits = {},
+    PlayUnitMap = {},
+    RecordUnitCounter = 0,
+    RecordUnits = {},
+    ModelToUnitId = {},
+    RecordConns = {},
+    StepFailCount = 0,
+    StatusText = "Idle",
+}
+
+local F = {}
+local UI = {}
+
+local Theme = {
+    Bg = Color3.fromRGB(14, 16, 23),
+    Sidebar = Color3.fromRGB(20, 23, 33),
+    Card = Color3.fromRGB(27, 31, 44),
+    Stroke = Color3.fromRGB(48, 56, 80),
+    Accent = Color3.fromRGB(64, 156, 255),
+    Green = Color3.fromRGB(52, 211, 153),
+    Amber = Color3.fromRGB(251, 191, 36),
+    Red = Color3.fromRGB(244, 63, 94),
+    Text = Color3.fromRGB(241, 245, 249),
+    SubText = Color3.fromRGB(148, 163, 184),
+}
+
+function F.TrackConn(conn)
+    if conn then table.insert(Controller.Connections, conn) end
+    return conn
+end
+
+function F.TrackBridgeConn(conn)
+    if conn then table.insert(Controller.BridgeConnections, conn) end
+    return conn
+end
+
+function F.SpawnLoop(fn)
+    local th = task.spawn(fn)
+    table.insert(Controller.Threads, th)
+    return th
+end
+
+function F.SetStatus(txt)
+    MacroState.StatusText = tostring(txt or "Idle")
+end
+
+-- ============================================================================
+-- 3. FILESYSTEM & PERSISTENT CONFIG
+-- ============================================================================
+function F.SanitizeName(name)
+    local s = tostring(name or "Default"):gsub("[\\/:*?\"<>|%c]", "_")
+    s = s:match("^%s*(.-)%s*$") or "Default"
+    return (s ~= "" and s) or "Default"
+end
+
+function F.EnsureFolders()
+    pcall(function()
+        if makefolder and isfolder then
+            if not isfolder(ROOT_FOLDER) then makefolder(ROOT_FOLDER) end
+            if not isfolder(MACRO_FOLDER) then makefolder(MACRO_FOLDER) end
+        end
+    end)
+end
+F.EnsureFolders()
+
+function F.SaveConfig()
+    pcall(function()
+        if writefile then
+            F.EnsureFolders()
+            writefile(CONFIG_FILE, S.HttpService:JSONEncode(Config))
+        end
+    end)
+end
+
+function F.LoadConfig()
+    pcall(function()
+        if isfile and readfile and isfile(CONFIG_FILE) then
+            local ok, decoded = pcall(S.HttpService.JSONDecode, S.HttpService, readfile(CONFIG_FILE))
+            if ok and type(decoded) == "table" then
+                for k, def in pairs(DefaultConfig) do
+                    if decoded[k] ~= nil and typeof(decoded[k]) == typeof(def) then
+                        Config[k] = decoded[k]
+                    end
+                end
+            end
+        end
+    end)
+end
+F.LoadConfig()
+
+function F.ListMacros()
+    local names, seen = {}, {}
+    pcall(function()
+        if listfiles and isfolder and isfolder(MACRO_FOLDER) then
+            for _, path in ipairs(listfiles(MACRO_FOLDER)) do
+                local file = path:match("([^/\\]+)$")
+                if file and file:lower():sub(-5) == ".json" then
+                    local base = file:sub(1, -6)
+                    if base ~= "" and not seen[base] then
+                        seen[base] = true
+                        table.insert(names, base)
+                    end
+                end
+            end
+        end
+    end)
+    table.sort(names)
+    if #names == 0 then names[1] = "Default" end
+    return names
+end
+
+function F.SaveMacro(name)
+    local clean = F.SanitizeName(name or Config.SelectedMacro)
+    Config.SelectedMacro = clean
+    F.SaveConfig()
+    local ok, err = pcall(function()
+        if not writefile then error("No writefile") end
+        F.EnsureFolders()
+        local md = S.ReplicatedStorage:FindFirstChild("MatchData")
+        local payload = {
+            Version = 1,
+            Name = clean,
+            MapId = (md and md:FindFirstChild("MapId") and tostring(md.MapId.Value)) or "",
+            TimingMode = Config.RecordOnlySellTimed and "Only Sell" or MacroState.TimingMode,
+            Steps = MacroState.Steps,
+        }
+        writefile(MACRO_FOLDER .. "/" .. clean .. ".json", S.HttpService:JSONEncode(payload))
+    end)
+    if ok then
+        State.FileListDirty = true
+        State.StepsDirty = true
+        F.SetStatus("Saved: " .. clean .. " (" .. #MacroState.Steps .. " steps)")
+    else
+        F.SetStatus("Save err: " .. tostring(err))
+    end
+    return ok
+end
+
+function F.LoadMacro(name)
+    local clean = F.SanitizeName(name or Config.SelectedMacro)
+    local path = MACRO_FOLDER .. "/" .. clean .. ".json"
+    if not (isfile and readfile and isfile(path)) then
+        F.SetStatus("No macro file: " .. clean)
+        return false
+    end
+    local ok, decoded = pcall(function() return S.HttpService:JSONDecode(readfile(path)) end)
+    if not ok or type(decoded) ~= "table" or type(decoded.Steps) ~= "table" then
+        F.SetStatus("Invalid JSON: " .. clean)
+        return false
+    end
+    MacroState.Steps = decoded.Steps
+    MacroState.TimingMode = tostring(decoded.TimingMode or "Full")
+    MacroState.CurrentStep = 1
+    MacroState.SoldUnits = {}
+    MacroState.PlayUnitMap = {}
+    MacroState.StepFailCount = 0
+    Config.SelectedMacro = clean
+    F.SaveConfig()
+    State.StepsDirty = true
+    State.FileListDirty = true
+    F.SetStatus("Loaded " .. clean .. " (" .. #MacroState.Steps .. " steps)")
+    return true
+end
+
+function F.DeleteMacro(name)
+    local clean = F.SanitizeName(name or Config.SelectedMacro)
+    local path = MACRO_FOLDER .. "/" .. clean .. ".json"
+    pcall(function()
+        if delfile and isfile and isfile(path) then delfile(path) end
+    end)
+    State.FileListDirty = true
+    F.SetStatus("Deleted: " .. clean)
+end
+
+function F.ClearMacro()
+    if MacroState.IsRecording then F.StopRecording() end
+    if MacroState.IsPlaying then F.StopPlayback() end
+    MacroState.Steps = {}
+    MacroState.CurrentStep = 1
+    MacroState.SoldUnits = {}
+    MacroState.PlayUnitMap = {}
+    MacroState.RecordUnitCounter = 0
+    MacroState.RecordUnits = {}
+    MacroState.ModelToUnitId = {}
+    State.StepsDirty = true
+    F.SetStatus("Cleared steps")
+end
+
+-- ============================================================================
+-- 4. GAME DATA & EQUIPPED UNITS (SAFE UI READER - ZERO getgc)
+-- ============================================================================
+function F.InitGameData()
+    local deps = S.ReplicatedStorage:WaitForChild("FrameworkDependencies", 10)
+    if not deps then return false end
+    local dataFolder = deps:FindFirstChild("7747272c")
+    if not dataFolder then
+        for _, child in ipairs(deps:GetChildren()) do
+            if child:FindFirstChild("TroopDatas") and child:FindFirstChild("MapDatas") then
+                dataFolder = child
+                break
+            end
+        end
+    end
+    if not dataFolder then return false end
+
+    local function safeReq(mod)
+        if mod and mod:IsA("ModuleScript") then
+            local ok, res = pcall(require, mod)
+            if ok then return res end
+        end
+        return nil
+    end
+
+    State.TroopDatas = safeReq(dataFolder:FindFirstChild("TroopDatas")) or {}
+    State.TroopsLimitGroups = safeReq(dataFolder:FindFirstChild("TroopsLimitGroups")) or {}
+    State.MapDatas = safeReq(dataFolder:FindFirstChild("MapDatas")) or {}
+    return true
+end
+
+function F.SyncEquippedTroops()
+    if not State.TroopDatas then return end
+    local pg = State.LocalPlayer and State.LocalPlayer:FindFirstChild("PlayerGui")
+    local troopsFrame = pg and pg:FindFirstChild("MainFrames")
+        and pg.MainFrames:FindFirstChild("TroopsSelector")
+        and pg.MainFrames.TroopsSelector:FindFirstChild("Troops")
+    if not troopsFrame then return end
+
+    local list = {}
+    for slot = 1, 5 do
+        local btn = troopsFrame:FindFirstChild("Troop" .. slot)
+        local iconLbl = btn and btn:FindFirstChild("TroopIcon")
+        local priceLbl = btn and btn:FindFirstChild("Price")
+        local iconId = (iconLbl and (iconLbl:IsA("ImageLabel") or iconLbl:IsA("ImageButton"))) and iconLbl.Image or ""
+        local priceTxt = (priceLbl and priceLbl:IsA("TextLabel")) and priceLbl.Text or ""
+        local parsedPrice = tonumber((priceTxt:gsub("%$", "")))
+        if iconId ~= "" then
+            for id, data in pairs(State.TroopDatas) do
+                if type(data) == "table" and data.Icon == iconId and (not parsedPrice or data.Price == parsedPrice) then
+                    list[slot] = id
+                    break
+                end
+            end
+        end
+    end
+    State.EquippedTroops = list
+end
+
+function F.IsTroopEquipped(troopId)
+    if next(State.EquippedTroops) == nil then
+        F.SyncEquippedTroops()
+    end
+    if next(State.EquippedTroops) == nil then
+        return true
+    end
+    for _, eqId in pairs(State.EquippedTroops) do
+        if eqId == troopId then return true end
+    end
+    return false
+end
+
+-- ============================================================================
+-- 5. SAFE DIRECT BRIDGENET2 + HASH WIRE
+-- ============================================================================
+local function letterToNumber(ch)
+    local num = tonumber(ch)
+    if num then return num end
+    local idx = string.find("abcdefghijklmnopqrstuvwxyz-", string.lower(ch), 1, true)
+    return tonumber(idx) or 0
+end
+
+function F.GetHashedEventName(eventName, mode)
+    local guidObj, timeObj = State.MatchGuidObj, State.GameTimeValObj
+    if not (guidObj and timeObj) then return nil end
+    local guid = tostring(guidObj.Value)
+    local gt = tonumber(timeObj.Value) or 1
+    if guid ~= State.HashCacheGuid or gt ~= State.HashCacheTime then
+        table.clear(State.HashCache)
+        State.HashCacheGuid = guid
+        State.HashCacheTime = gt
+    end
+    local cacheKey = tostring(mode) .. ":" .. tostring(eventName)
+    if State.HashCache[cacheKey] then return State.HashCache[cacheKey] end
+
+    local sub1 = string.sub(guid, gt, gt)
+    local idx2 = math.clamp(gt + 3, 1, 32)
+    local sub2 = string.sub(guid, idx2, idx2)
+    local prefix = (mode == "FuncRecieve") and "FR_" or "UR_"
+
+    if S.RunService:IsStudio() then
+        local studioName = prefix .. tostring(eventName)
+        State.HashCache[cacheKey] = studioName
+        return studioName
+    end
+
+    local fmt = letterToNumber(sub2) > 17
+        and "%s-%s_%s'%s:%s|%s/%s!%s=%s@%s(%s$%s*%s&%s^%s?%s{%s"
+        or "%s/%s!%s=%s@%s(%s$%s*%s&%s^%s?%s{%s-%s_%s'%s:%s|%s"
+
+    local pVer, cId = tostring(game.PlaceVersion), tostring(game.CreatorId)
+    local pId, gId = tostring(game.PlaceId), tostring(game.GameId)
+    local eStr = tostring(eventName)
+
+    local formatted = string.format(
+        fmt, eStr, pId, pVer, cId, sub1, sub2, eStr, pId,
+        sub1, pVer, cId, gId, sub1, eStr, pId, sub1, sub2
+    )
+
+    local n1 = letterToNumber(sub1)
+    local digest
+    if n1 > 15 then digest = Hash.sha3_224(formatted)
+    elseif n1 > 6 then digest = Hash.sha512_224(formatted)
+    else digest = Hash.sha512_256(formatted) end
+
+    local full = prefix .. digest
+    State.HashCache[cacheKey] = full
+    return full
+end
+
+function F.PackArgs(...)
+    local packed = table.pack(...)
+    local out, nilId = {}, State.NilIdentifier
+    for i = 1, packed.n do
+        out[i] = (packed[i] == nil) and nilId or packed[i]
+    end
+    return out
+end
+
+function F.UnpackArgs(tbl)
+    if type(tbl) ~= "table" then return end
+    local nilId, n = State.NilIdentifier, 0
+    for k in pairs(tbl) do
+        if type(k) == "number" and k > n then n = k end
+    end
+    local copy = {}
+    for i = 1, n do
+        copy[i] = (tbl[i] ~= nilId) and tbl[i] or nil
+    end
+    return table.unpack(copy, 1, n)
+end
+
+function F.ResolveEventId(eventName)
+    if not State.IdStorage then return nil end
+    local hashed = F.GetHashedEventName("Event-" .. eventName, "Event")
+    if not hashed then return nil end
+    local strVal = State.IdStorage:FindFirstChild(hashed)
+    if strVal and strVal:IsA("StringValue") then return strVal.Value end
+    return nil
+end
+
+function F.FireEvent(eventName, ...)
+    if not State.DataRemote then return false end
+    local id = F.ResolveEventId(eventName)
+    if not id then return false end
+    table.insert(State.OutboundQueue, F.PackArgs(...))
+    table.insert(State.OutboundQueue, id)
+    return true
+end
+
+function F.BindInboundEvent(eventName, callback)
+    local hashed = F.GetHashedEventName("Event-" .. eventName, "Event")
+    if not (hashed and State.IdStorage) then return end
+    local function attach(child)
+        if child and child.Name == hashed and child:IsA("StringValue") then
+            State.InboundHandlers[child.Value] = State.InboundHandlers[child.Value] or {}
+            table.insert(State.InboundHandlers[child.Value], callback)
+        end
+    end
+    local existing = State.IdStorage:FindFirstChild(hashed)
+    if existing then attach(existing) end
+    F.TrackBridgeConn(State.IdStorage.ChildAdded:Connect(attach))
+end
+
+function F.InitNetwork()
+    State.DataRemote = S.ReplicatedStorage:WaitForChild("dataRemoteEvent", 15)
+    State.IdStorage = S.ReplicatedStorage:WaitForChild("identifierStorage", 15)
+    State.MatchGuidObj = S.ReplicatedStorage:WaitForChild("MatchGuid", 15)
+    State.GameTimeValObj = S.ReplicatedStorage:WaitForChild("GameTimeVal", 15)
+    if not (State.DataRemote and State.IdStorage and State.MatchGuidObj and State.GameTimeValObj) then
+        State.BridgeStatusText = "Missing RS"
+        return false
+    end
+
+    local nilObj = State.IdStorage:WaitForChild("NilIdentifier", 10)
+    if nilObj and nilObj:IsA("StringValue") then State.NilIdentifier = nilObj.Value end
+
+    F.TrackBridgeConn(S.RunService.PostSimulation:Connect(function()
+        if not Controller.Running then return end
+        local q = State.OutboundQueue
+        if #q > 0 and State.DataRemote then
+            local batch = table.clone(q)
+            table.clear(q)
+            State.DataRemote:FireServer(batch)
+        end
+    end))
+
+    F.TrackBridgeConn(State.DataRemote.OnClientEvent:Connect(function(packetMap)
+        if not Controller.Running or type(packetMap) ~= "table" then return end
+        for idChar, payloads in pairs(packetMap) do
+            local handlers = State.InboundHandlers[idChar]
+            if handlers and type(payloads) == "table" then
+                for _, argsTbl in ipairs(payloads) do
+                    for _, fn in ipairs(handlers) do
+                        task.spawn(fn, F.UnpackArgs(argsTbl))
+                    end
+                end
+            end
+        end
+    end))
+
+    F.BindInboundEvent("ShowMatchFinishStat", function(_, _, _, _, _, _, won)
+        State.MatchEnded = true
+        State.MatchFinishShownAt = State.MatchFinishShownAt or os.clock()
+        if MacroState.IsRecording then F.StopRecording() end
+        if MacroState.IsPlaying then F.StopPlayback() end
+        F.SetStatus(won and "Match Won!" or "Match Lost!")
+    end)
+
+    F.BindInboundEvent("ReplicaChange", function(replicaName, changes)
+        if replicaName == ("PlayerData-" .. tostring(State.LocalPlayer.UserId)) and type(changes) == "table" then
+            for _, entry in ipairs(changes) do
+                if type(entry) == "table" and entry.Index == "EquippedTroops" then
+                    task.delay(0.1, F.SyncEquippedTroops)
+                    break
+                end
+            end
+        end
+    end)
+
+    local testId = F.ResolveEventId("PlaceTroop")
+    State.BridgeStatusText = testId and ("Wire OK (" .. testId .. ")") or "Wire Pending"
+    return true
+end
+
+-- ============================================================================
+-- 6. PLACEMENT MATH, BOUNDING BOX & HELPERS
+-- ============================================================================
+local function GetBoundingBox(target, cf, mode)
+    local parts = typeof(target) == "Instance" and target:GetDescendants() or (type(target) == "table" and target or {})
+    if mode == "CharacterPartsOnly" then
+        local filtered = {}
+        for _, v in ipairs(parts) do
+            if typeof(v) == "Instance" and v:IsA("BasePart") and table.find(CHAR_PARTS, v.Name) then
+                table.insert(filtered, v)
+            end
+        end
+        if #filtered > 0 then parts = filtered end
+    end
+    local refCF = cf or CFrame.new()
+    local minX, minY, minZ = math.huge, math.huge, math.huge
+    local maxX, maxY, maxZ = -math.huge, -math.huge, -math.huge
+    local found = false
+    for _, v in ipairs(parts) do
+        if typeof(v) == "Instance" and v:IsA("BasePart") then
+            found = true
+            local rel = refCF:ToObjectSpace(v.CFrame)
+            local s = v.Size
+            local x, y, z, r00, r01, r02, r10, r11, r12, r20, r21, r22 = rel:GetComponents()
+            local ex = 0.5 * (math.abs(r00) * s.X + math.abs(r01) * s.Y + math.abs(r02) * s.Z)
+            local ey = 0.5 * (math.abs(r10) * s.X + math.abs(r11) * s.Y + math.abs(r12) * s.Z)
+            local ez = 0.5 * (math.abs(r20) * s.X + math.abs(r21) * s.Y + math.abs(r22) * s.Z)
+            if x - ex < minX then minX = x - ex end
+            if y - ey < minY then minY = y - ey end
+            if z - ez < minZ then minZ = z - ez end
+            if x + ex > maxX then maxX = x + ex end
+            if y + ey > maxY then maxY = y + ey end
+            if z + ez > maxZ then maxZ = z + ez end
+        end
+    end
+    if not found then return refCF, Vector3.new(2, 5, 2) end
+    local minV, maxV = Vector3.new(minX, minY, minZ), Vector3.new(maxX, maxY, maxZ)
+    return (refCF - refCF.Position) + refCF:PointToWorldSpace((maxV + minV) * 0.5), maxV - minV
+end
+
+function F.GetTroopBoxData(troopId)
+    local td = State.TroopDatas and State.TroopDatas[troopId]
+    if not (td and td.Model) then return Vector3.new(2, 5, 2), Vector3.new(2, 5, 2) end
+    local charTarget = td.Model:FindFirstChild("TroopModel") or td.Model
+    local _, charSize = GetBoundingBox(charTarget, nil, "CharacterPartsOnly")
+    local _, fullSize = GetBoundingBox(td.Model)
+    return fullSize, Vector3.new(charSize.X, fullSize.Y, charSize.Z)
+end
+
+function F.UpdatePlacementFilters()
+    local excl = {}
+    local placing = workspace:FindFirstChild("PlacingModels")
+    if placing then table.insert(excl, placing) end
+    if State.LocalPlayer and State.LocalPlayer.Character then
+        table.insert(excl, State.LocalPlayer.Character)
+    end
+    State.GroundRayParams.FilterDescendantsInstances = excl
+
+    local snapExcl = table.clone(excl)
+    for _, n in ipairs({ "Attackers", "Troops", "StunnedTroops" }) do
+        local f = workspace:FindFirstChild(n)
+        if f then table.insert(snapExcl, f) end
+    end
+    State.SnapRayParams.FilterDescendantsInstances = snapExcl
+
+    local overlapInc = {}
+    for _, n in ipairs({ "Troops", "StunnedTroops" }) do
+        local f = workspace:FindFirstChild(n)
+        if f then table.insert(overlapInc, f) end
+    end
+    State.TooNearOverlap.FilterDescendantsInstances = overlapInc
+end
+
+function F.CanPlaceAt(troopId, pivotCF)
+    local ground = workspace:FindFirstChild("Ground")
+    if not ground then return false end
+    F.UpdatePlacementFilters()
+    local fullSize, checkSize = F.GetTroopBoxData(troopId)
+    local hit = workspace:Blockcast(
+        pivotCF + Vector3.new(0, checkSize.Y / 2, 0),
+        Vector3.new(checkSize.X, 0.05, checkSize.Z),
+        Vector3.new(0, -checkSize.Y, 0),
+        State.GroundRayParams
+    )
+    if not (hit and hit.Instance and hit.Instance:IsDescendantOf(ground)) then return false end
+    if hit.Distance < (checkSize.Y - 0.2) then return false end
+    if #State.TooNearOverlap.FilterDescendantsInstances > 0 then
+        local bounds = workspace:GetPartBoundsInBox(pivotCF, fullSize + Vector3.new(0.1, 0.1, 0.1), State.TooNearOverlap)
+        if #bounds > 0 then return false end
+    end
+    return true
+end
+
+function F.SnapPosToGround(troopId, pos)
+    local ground = workspace:FindFirstChild("Ground")
+    if not ground then return pos end
+    F.UpdatePlacementFilters()
+    local fullSize = F.GetTroopBoxData(troopId)
+    local hit = workspace:Raycast(Vector3.new(pos.X, pos.Y + 8, pos.Z), Vector3.new(0, -24, 0), State.SnapRayParams)
+    if hit and hit.Instance and hit.Instance:IsDescendantOf(ground) then
+        return Vector3.new(pos.X, hit.Position.Y + fullSize.Y / 2, pos.Z)
+    end
+    return pos
+end
+
+function F.SolvePlacement(troopId, rawPos, rotIdx)
+    local rIdx = math.clamp(math.floor(tonumber(rotIdx) or 1), 1, #ROTATIONS)
+    local rotCF = CFrame.Angles(0, math.rad(ROTATIONS[rIdx]), 0)
+    if F.CanPlaceAt(troopId, CFrame.new(rawPos) * rotCF) then return rawPos, rIdx end
+    local snapped = F.SnapPosToGround(troopId, rawPos)
+    if F.CanPlaceAt(troopId, CFrame.new(snapped) * rotCF) then return snapped, rIdx end
+    for radius = 0.6, 5.4, 0.6 do
+        for s = 0, 11 do
+            local ang = (s / 12) * math.pi * 2
+            local testPos = F.SnapPosToGround(troopId, Vector3.new(rawPos.X + math.cos(ang) * radius, rawPos.Y, rawPos.Z + math.sin(ang) * radius))
+            if F.CanPlaceAt(troopId, CFrame.new(testPos) * rotCF) then return testPos, rIdx end
+        end
+    end
+    return nil, rIdx
+end
+
+function F.GetTroopLimitGroupsList(troopId)
+    local td = State.TroopDatas and State.TroopDatas[troopId]
+    if not (td and td.LimitGroup) then return {} end
+    if type(td.LimitGroup) == "string" then return { td.LimitGroup } end
+    if type(td.LimitGroup) == "table" then return td.LimitGroup end
+    return {}
+end
+
+function F.GetOwnedTroopModels()
+    local result, lp = {}, State.LocalPlayer
+    for _, folderName in ipairs({ "Troops", "StunnedTroops" }) do
+        local folder = workspace:FindFirstChild(folderName)
+        if folder then
+            for _, model in ipairs(folder:GetChildren()) do
+                if model:IsA("Model") then
+                    local owner = model:FindFirstChild("TroopOwner")
+                    if owner and owner:IsA("ObjectValue") and owner.Value == lp then
+                        table.insert(result, model)
+                    end
+                end
+            end
+        end
+    end
+    return result
+end
+
+function F.CheckLimitGroupAllows(troopId)
+    local groups = F.GetTroopLimitGroupsList(troopId)
+    if #groups == 0 or not State.TroopsLimitGroups then return true end
+    local owned = F.GetOwnedTroopModels()
+    for _, grpName in ipairs(groups) do
+        local grpInfo = State.TroopsLimitGroups[grpName]
+        if grpInfo and type(grpInfo.Limit) == "number" then
+            local count = 0
+            for _, m in ipairs(owned) do
+                if table.find(F.GetTroopLimitGroupsList(m.Name), grpName) then count += 1 end
+            end
+            if count >= grpInfo.Limit then return false, grpName end
+        end
+    end
+    return true
+end
+
+function F.GetMoney()
+    local ls = State.LocalPlayer and State.LocalPlayer:FindFirstChild("leaderstats")
+    local money = ls and ls:FindFirstChild("Money")
+    return (money and tonumber(money.Value)) or 0
+end
+
+function F.GetMatchWaveAndTime()
+    local md = S.ReplicatedStorage:FindFirstChild("MatchData")
+    local wave = (md and md:FindFirstChild("CurrentWave") and tonumber(md.CurrentWave.Value)) or 0
+    local serverTimer = (md and md:FindFirstChild("MatchTimer") and tonumber(md.MatchTimer.Value)) or 0
+    local elapsed = os.clock() - State.MatchStartClock
+    if math.abs(elapsed - serverTimer) > 2.5 and serverTimer > 0 then
+        State.MatchStartClock = os.clock() - serverTimer
+        elapsed = serverTimer
+    end
+    return wave, math.max(0, math.round(elapsed * 100) / 100)
+end
+
+function F.GetTroopAnchorPosition(model)
+    local center = model:FindFirstChild("CenterPart")
+    if center and center:IsA("BasePart") then return center.Position end
+    local ok, pivot = pcall(model.GetPivot, model)
+    return ok and pivot.Position or Vector3.zero
+end
+
+function F.GetNearestRotationIndex(model)
+    local target = model:FindFirstChild("TroopModel") or model
+    local ok, pivot = pcall(target.GetPivot, target)
+    if not ok then return 1 end
+    local _, ry, _ = pivot:ToEulerAnglesYXZ()
+    local deg, bestIdx, bestDiff = math.deg(ry), 1, math.huge
+    for idx, rotDeg in ipairs(ROTATIONS) do
+        local diff = math.abs(((deg - rotDeg + 180) % 360) - 180)
+        if diff < bestDiff then bestDiff, bestIdx = diff, idx end
+    end
+    return bestIdx
+end
+
+function F.CanSellTroop(model)
+    if not (model and model.Parent) then return false end
+    if model:GetAttribute("CannotSell") == true then return false end
+    local td = State.TroopDatas and State.TroopDatas[model.Name]
+    if td and td.CanSell == false then return false end
+    return true
+end
+
+local function isInTroopFolder(model)
+    if not (model and model.Parent) then return false end
+    local pName = model.Parent.Name
+    return model.Parent.Parent == workspace and (pName == "Troops" or pName == "StunnedTroops")
+end
+
+-- ============================================================================
+-- 7. STUN-AWARE RECORDING ENGINE
+-- ============================================================================
+function F.ClearRecordConnections()
+    for _, c in ipairs(MacroState.RecordConns) do pcall(function() c:Disconnect() end) end
+    table.clear(MacroState.RecordConns)
+end
+
+function F.PushRecordedStep(step)
+    if not MacroState.IsRecording then return end
+    local wave, mTime = F.GetMatchWaveAndTime()
+    step.Wave = wave
+    step.MatchTime = mTime
+    step.Delta = math.max(0, math.round((mTime - State.LastRecordedMatchTime) * 100) / 100)
+    State.LastRecordedMatchTime = mTime
+    table.insert(MacroState.Steps, step)
+    State.StepsDirty = true
+    F.SetStatus(string.format("Rec #%d: %s %s (W%d)", #MacroState.Steps, step.Type, step.Troop or ("#" .. tostring(step.UnitId)), wave))
+end
+
+function F.AttachRecordedUnit(model, isPreExisting)
+    if not MacroState.IsRecording or not (model and model:IsA("Model")) then return end
+    if MacroState.ModelToUnitId[model] then return end
+
+    task.spawn(function()
+        local owner = model:WaitForChild("TroopOwner", 2)
+        local lvlObj = model:WaitForChild("TroopLevel", 2)
+        local tgtObj = model:WaitForChild("TroopTarget", 2)
+        if not MacroState.IsRecording or not Controller.Running then return end
+        if not (owner and owner:IsA("ObjectValue") and owner.Value == State.LocalPlayer) then return end
+        if MacroState.ModelToUnitId[model] or not isInTroopFolder(model) then return end
+
+        MacroState.RecordUnitCounter += 1
+        local unitId = MacroState.RecordUnitCounter
+        MacroState.ModelToUnitId[model] = unitId
+        MacroState.RecordUnits[unitId] = {
+            Model = model,
+            Troop = model.Name,
+            LastLevel = (lvlObj and tonumber(lvlObj.Value)) or 1,
+            LastTarget = (tgtObj and tostring(tgtObj.Value)) or "First",
+        }
+
+        if not isPreExisting then
+            local pos = F.GetTroopAnchorPosition(model)
+            local td = State.TroopDatas and State.TroopDatas[model.Name]
+            F.PushRecordedStep({
+                Type = "Place",
+                UnitId = unitId,
+                Troop = model.Name,
+                Pos = { math.round(pos.X * 1000) / 1000, math.round(pos.Y * 1000) / 1000, math.round(pos.Z * 1000) / 1000 },
+                Rot = F.GetNearestRotationIndex(model),
+                Cost = (td and td.Price) or 0,
+            })
+        end
+
+        if lvlObj then
+            table.insert(MacroState.RecordConns, lvlObj.Changed:Connect(function()
+                if not MacroState.IsRecording then return end
+                local rec = MacroState.RecordUnits[unitId]
+                if not rec then return end
+                local newLvl = tonumber(lvlObj.Value) or rec.LastLevel
+                if newLvl > rec.LastLevel then
+                    local td = State.TroopDatas and State.TroopDatas[model.Name]
+                    local cost = 0
+                    if td and type(td.GetNextLevelPrice) == "function" then
+                        for l = rec.LastLevel, newLvl - 1 do
+                            local ok, p = pcall(td.GetNextLevelPrice, l)
+                            if ok and type(p) == "number" then cost += p end
+                        end
+                    end
+                    rec.LastLevel = newLvl
+                    F.PushRecordedStep({ Type = "Upgrade", UnitId = unitId, Troop = model.Name, Level = newLvl, Cost = cost })
+                end
+            end))
+        end
+
+        if tgtObj then
+            table.insert(MacroState.RecordConns, tgtObj.Changed:Connect(function()
+                if not MacroState.IsRecording then return end
+                local rec = MacroState.RecordUnits[unitId]
+                if not rec then return end
+                local newTgt = tostring(tgtObj.Value)
+                if newTgt ~= rec.LastTarget then
+                    rec.LastTarget = newTgt
+                    F.PushRecordedStep({ Type = "Target", UnitId = unitId, Troop = model.Name, Target = newTgt })
+                end
+            end))
+        end
+    end)
+end
+
+function F.HandleRecordedRemoval(model)
+    local unitId = MacroState.ModelToUnitId[model]
+    if not unitId then return end
+    task.delay(0.2, function()
+        if not MacroState.IsRecording or not Controller.Running or State.MatchEnded then return end
+        if isInTroopFolder(model) then return end
+        local md = S.ReplicatedStorage:FindFirstChild("MatchData")
+        if md and md:FindFirstChild("CurrentWave") and tonumber(md.CurrentWave.Value) <= 0 then return end
+        if MacroState.ModelToUnitId[model] == unitId then
+            local rec = MacroState.RecordUnits[unitId]
+            MacroState.ModelToUnitId[model] = nil
+            MacroState.RecordUnits[unitId] = nil
+            F.PushRecordedStep({ Type = "Sell", UnitId = unitId, Troop = rec and rec.Troop or model.Name })
+        end
+    end)
+end
+
+function F.StartRecording()
+    if MacroState.IsPlaying then F.StopPlayback() end
+    F.ClearRecordConnections()
+    MacroState.IsRecording = true
+    MacroState.Steps = {}
+    MacroState.RecordUnitCounter = 0
+    MacroState.RecordUnits = {}
+    MacroState.ModelToUnitId = {}
+    MacroState.TimingMode = Config.RecordOnlySellTimed and "Only Sell" or "Full"
+    local _, curTime = F.GetMatchWaveAndTime()
+    State.LastRecordedMatchTime = curTime
+
+    for _, folderName in ipairs({ "Troops", "StunnedTroops" }) do
+        local folder = workspace:FindFirstChild(folderName)
+        if folder then
+            for _, child in ipairs(folder:GetChildren()) do F.AttachRecordedUnit(child, true) end
+            table.insert(MacroState.RecordConns, folder.ChildAdded:Connect(function(child) F.AttachRecordedUnit(child, false) end))
+            table.insert(MacroState.RecordConns, folder.ChildRemoved:Connect(function(child) F.HandleRecordedRemoval(child) end))
+        end
+    end
+    State.StepsDirty = true
+    F.SetStatus("Recording (" .. MacroState.TimingMode .. ")...")
+end
+
+function F.StopRecording()
+    if not MacroState.IsRecording then return end
+    MacroState.IsRecording = false
+    F.ClearRecordConnections()
+    State.StepsDirty = true
+    F.SetStatus("Stopped Rec (" .. #MacroState.Steps .. " steps)")
+end
+
+-- ============================================================================
+-- 8. REPLAY / PLAYBACK ENGINE & QUICK ACTIONS
+-- ============================================================================
+function F.GetEffectiveTimingMode()
+    return (Config.PlaybackTimingOverride ~= "From Macro") and Config.PlaybackTimingOverride or (MacroState.TimingMode or "Full")
+end
+
+function F.WaitIfStunned(model)
+    if not Config.WaitIfStunned then return true end
+    if not (model and model.Parent) then return false end
+    local stunned = workspace:FindFirstChild("StunnedTroops")
+    if stunned and model.Parent == stunned then
+        F.SetStatus("Waiting (Stunned): " .. model.Name)
+        while Controller.Running and MacroState.IsPlaying and model.Parent == stunned do
+            task.wait(0.15)
+        end
+    end
+    return Controller.Running and MacroState.IsPlaying and isInTroopFolder(model)
+end
+
+function F.FindFallbackUnit(step)
+    local mapped = {}
+    for _, m in pairs(MacroState.PlayUnitMap) do mapped[m] = true end
+    for _, m in ipairs(F.GetOwnedTroopModels()) do
+        if not mapped[m] and (not step.Troop or m.Name == step.Troop) then return m end
+    end
+    return nil
+end
+
+function F.WaitForSpawnedTroop(troopId, targetPos, snapshotSet, timeoutSec)
+    local deadline, lp = os.clock() + (timeoutSec or 3.0), State.LocalPlayer
+    while os.clock() < deadline and Controller.Running and MacroState.IsPlaying do
+        local bestModel, bestDist = nil, math.huge
+        for _, folderName in ipairs({ "Troops", "StunnedTroops" }) do
+            local folder = workspace:FindFirstChild(folderName)
+            if folder then
+                for _, child in ipairs(folder:GetChildren()) do
+                    if child:IsA("Model") and not snapshotSet[child] and child.Name == troopId then
+                        local owner = child:FindFirstChild("TroopOwner")
+                        if owner and owner:IsA("ObjectValue") and owner.Value == lp then
+                            local dist = (F.GetTroopAnchorPosition(child) - targetPos).Magnitude
+                            if dist < bestDist then bestDist, bestModel = dist, child end
+                        end
+                    end
+                end
+            end
+        end
+        if bestModel then return bestModel end
+        task.wait(0.08)
+    end
+    return nil
+end
+
+function F.ExecuteMacroStep(step)
+    local mode = F.GetEffectiveTimingMode()
+    local needWave, needTime = tonumber(step.Wave) or 1, tonumber(step.MatchTime) or 0
+    local gateWave = (mode == "Full") or (mode == "Only Sell" and step.Type == "Sell") or (mode == "Cash Only" and step.Type == "Sell")
+    local gateTime = (mode == "Full") or (mode == "Only Sell" and step.Type == "Sell")
+
+    if gateWave or gateTime then
+        while Controller.Running and MacroState.IsPlaying do
+            if State.MatchEnded then return false end
+            local curWave, curTime = F.GetMatchWaveAndTime()
+            if ((not gateWave) or curWave >= needWave) and ((not gateTime) or curTime >= needTime) then break end
+            F.SetStatus(string.format("Step %d/%d Wait W%d %.1fs", MacroState.CurrentStep, #MacroState.Steps, needWave, needTime))
+            task.wait(0.15)
+        end
+    end
+    if not Controller.Running or not MacroState.IsPlaying or State.MatchEnded then return false end
+
+    local paceDelay = Config.SafePacing and 0.30 or 0.14
+    local since = os.clock() - State.LastActionClock
+    if since < paceDelay then task.wait(paceDelay - since) end
+
+    if step.Type == "Place" then
+        local td = State.TroopDatas and State.TroopDatas[step.Troop]
+        if not td then return true end
+        if not F.IsTroopEquipped(step.Troop) then
+            F.SetStatus("Not equipped: " .. tostring(step.Troop))
+            task.wait(1.0)
+            return false
+        end
+        local limitOk, grp = F.CheckLimitGroupAllows(step.Troop)
+        if not limitOk then
+            F.SetStatus("Limit (" .. tostring(grp) .. ") - skip")
+            return true
+        end
+        local price = tonumber(td.Price) or tonumber(step.Cost) or 0
+        while Controller.Running and MacroState.IsPlaying and not State.MatchEnded and F.GetMoney() < price do
+            F.SetStatus(string.format("Need $%d for %s", price, step.Troop))
+            task.wait(0.2)
+        end
+        if not Controller.Running or not MacroState.IsPlaying or State.MatchEnded then return false end
+
+        local pArr = step.Pos or { 0, 0, 0 }
+        local rawPos = Vector3.new(tonumber(pArr[1]) or 0, tonumber(pArr[2]) or 0, tonumber(pArr[3]) or 0)
+        local finalPos, rotIdx = F.SolvePlacement(step.Troop, rawPos, step.Rot or 1)
+        if not finalPos then
+            F.SetStatus("Blocked: " .. step.Troop)
+            task.wait(0.4)
+            return false
+        end
+
+        local snapshot = {}
+        for _, m in ipairs(F.GetOwnedTroopModels()) do snapshot[m] = true end
+
+        F.SetStatus("Placing " .. step.Troop)
+        State.LastActionClock = os.clock()
+        if not F.FireEvent("PlaceTroop", step.Troop, finalPos, rotIdx) then return false end
+
+        local spawned = F.WaitForSpawnedTroop(step.Troop, finalPos, snapshot, 3.0)
+        if spawned then
+            MacroState.PlayUnitMap[step.UnitId] = spawned
+            return true
+        end
+        return false
+
+    elseif step.Type == "Upgrade" then
+        if MacroState.SoldUnits[step.UnitId] then return true end
+        local model = MacroState.PlayUnitMap[step.UnitId]
+        if not (model and model.Parent) then
+            model = F.FindFallbackUnit(step)
+            if model then MacroState.PlayUnitMap[step.UnitId] = model else return false end
+        end
+        if not F.WaitIfStunned(model) then return false end
+
+        local td = State.TroopDatas and State.TroopDatas[model.Name]
+        local lvlObj = model:FindFirstChild("TroopLevel")
+        if not (td and lvlObj) then return true end
+        local maxLvl = (td.GetMaxLevel and td.GetMaxLevel()) or 99
+        local targetLvl = math.min(tonumber(step.Level) or (tonumber(lvlObj.Value) + 1), maxLvl)
+
+        while Controller.Running and MacroState.IsPlaying and not State.MatchEnded do
+            if not isInTroopFolder(model) or not F.WaitIfStunned(model) then return false end
+            local curLvl = tonumber(lvlObj.Value) or 1
+            if curLvl >= targetLvl or curLvl >= maxLvl then return true end
+            local nextPrice = td.GetNextLevelPrice and td.GetNextLevelPrice(curLvl)
+            if type(nextPrice) ~= "number" then return true end
+            while Controller.Running and MacroState.IsPlaying and not State.MatchEnded and F.GetMoney() < nextPrice do
+                F.SetStatus(string.format("Need $%d Upg %s Lv%d", nextPrice, model.Name, curLvl + 1))
+                task.wait(0.2)
+            end
+            if not Controller.Running or not MacroState.IsPlaying or State.MatchEnded then return false end
+
+            F.SetStatus(string.format("Upgrading %s -> Lv%d", model.Name, curLvl + 1))
+            State.LastActionClock = os.clock()
+            F.FireEvent("UpgradeTroop", model)
+
+            local waitEnd = os.clock() + 2.0
+            while os.clock() < waitEnd and Controller.Running and MacroState.IsPlaying do
+                if (tonumber(lvlObj.Value) or curLvl) > curLvl then break end
+                task.wait(0.08)
+            end
+            if (tonumber(lvlObj.Value) or curLvl) <= curLvl then return false end
+            task.wait(Config.SafePacing and 0.22 or 0.1)
+        end
+        return false
+
+    elseif step.Type == "Target" then
+        if MacroState.SoldUnits[step.UnitId] then return true end
+        local model = MacroState.PlayUnitMap[step.UnitId]
+        if not (model and isInTroopFolder(model)) then return true end
+        if not F.WaitIfStunned(model) then return false end
+        local tgtObj = model:FindFirstChild("TroopTarget")
+        if not tgtObj then return true end
+        local desired = tostring(step.Target or "First")
+        for _ = 1, 6 do
+            if not Controller.Running or not MacroState.IsPlaying or State.MatchEnded then return false end
+            local cur = tostring(tgtObj.Value)
+            if cur == desired then return true end
+            State.LastActionClock = os.clock()
+            F.FireEvent("ChangeTargetting", model)
+            local deadline = os.clock() + 1.0
+            while os.clock() < deadline and tostring(tgtObj.Value) == cur do task.wait(0.06) end
+        end
+        return tostring(tgtObj.Value) == desired
+
+    elseif step.Type == "Sell" then
+        if MacroState.SoldUnits[step.UnitId] then return true end
+        local model = MacroState.PlayUnitMap[step.UnitId]
+        if not (model and isInTroopFolder(model)) then
+            MacroState.SoldUnits[step.UnitId] = true
+            return true
+        end
+        if not F.CanSellTroop(model) then return true end
+        if not F.WaitIfStunned(model) then return false end
+
+        F.SetStatus("Selling " .. model.Name)
+        State.LastActionClock = os.clock()
+        F.FireEvent("SellTroop", model)
+        local waitEnd = os.clock() + 2.5
+        while os.clock() < waitEnd and Controller.Running and MacroState.IsPlaying do
+            if not isInTroopFolder(model) then
+                MacroState.SoldUnits[step.UnitId] = true
+                MacroState.PlayUnitMap[step.UnitId] = nil
+                return true
+            end
+            task.wait(0.08)
+        end
+        return false
+    end
+    return true
+end
+
+function F.StartPlayback()
+    if #MacroState.Steps == 0 then
+        F.SetStatus("No macro steps")
+        return false
+    end
+    if MacroState.IsRecording then F.StopRecording() end
+    if MacroState.IsPlaying then return true end
+
+    MacroState.IsPlaying = true
+    MacroState.CurrentStep = 1
+    MacroState.SoldUnits = {}
+    MacroState.PlayUnitMap = {}
+    MacroState.StepFailCount = 0
+    State.StepsDirty = true
+    F.SetStatus("Replaying (" .. #MacroState.Steps .. " steps)")
+
+    F.SpawnLoop(function()
+        while Controller.Running and MacroState.IsPlaying do
+            local isLobby = S.ReplicatedStorage:FindFirstChild("IsLobby")
+            if isLobby and isLobby.Value == true then
+                F.SetStatus("In Lobby")
+                task.wait(0.5)
+                continue
+            end
+            if State.MatchEnded then
+                task.wait(0.4)
+                continue
+            end
+            local stepIdx = MacroState.CurrentStep
+            if stepIdx > #MacroState.Steps then
+                F.SetStatus("Replay Done (" .. #MacroState.Steps .. " steps)")
+                MacroState.IsPlaying = false
+                State.StepsDirty = true
+                break
+            end
+            local ok, done = pcall(F.ExecuteMacroStep, MacroState.Steps[stepIdx])
+            if not Controller.Running or not MacroState.IsPlaying then break end
+            if ok and done then
+                MacroState.CurrentStep += 1
+                MacroState.StepFailCount = 0
+                State.StepsDirty = true
+            else
+                MacroState.StepFailCount += 1
+                if MacroState.StepFailCount >= 8 then
+                    MacroState.CurrentStep += 1
+                    MacroState.StepFailCount = 0
+                    State.StepsDirty = true
+                else
+                    task.wait(0.4)
+                end
+            end
+        end
+    end)
+    return true
+end
+
+function F.StopPlayback()
+    if not MacroState.IsPlaying then return end
+    MacroState.IsPlaying = false
+    State.StepsDirty = true
+    F.SetStatus("Paused at step " .. tostring(MacroState.CurrentStep))
+end
+
+function F.UpgradeAllUnits(maxOut)
+    F.SpawnLoop(function()
+        for _, m in ipairs(F.GetOwnedTroopModels()) do
+            if not Controller.Running then break end
+            if m.Parent == workspace:FindFirstChild("Troops") then
+                local td = State.TroopDatas and State.TroopDatas[m.Name]
+                local lvlObj = m:FindFirstChild("TroopLevel")
+                if td and lvlObj then
+                    local maxL = (td.GetMaxLevel and td.GetMaxLevel()) or 99
+                    for _ = 1, (maxOut and maxL or 1) do
+                        if not Controller.Running or m.Parent ~= workspace:FindFirstChild("Troops") then break end
+                        local curL = tonumber(lvlObj.Value) or 1
+                        local price = curL < maxL and td.GetNextLevelPrice and td.GetNextLevelPrice(curL)
+                        if type(price) ~= "number" or F.GetMoney() < price then break end
+                        F.FireEvent("UpgradeTroop", m)
+                        task.wait(0.18)
+                    end
+                end
+            end
+        end
+        F.SetStatus(maxOut and "Maxed affordable units" or "Upgraded all x1")
+    end)
+end
+
+function F.SellUnits(farmsOnly)
+    F.SpawnLoop(function()
+        for _, m in ipairs(F.GetOwnedTroopModels()) do
+            if not Controller.Running then break end
+            if F.CanSellTroop(m) then
+                local isFarm = farmsOnly and (table.find(F.GetTroopLimitGroupsList(m.Name), "MoneyTroops") ~= nil)
+                if (not farmsOnly) or isFarm then
+                    F.FireEvent("SellTroop", m)
+                    task.wait(0.15)
+                end
+            end
+        end
+        F.SetStatus(farmsOnly and "Sold farms" or "Sold all sellable units")
+    end)
+end
+
+-- ============================================================================
+-- 9. MATCH AUTOMATION (VOTE, SKIP WAVE, PLAY AGAIN, ANTI-AFK)
+-- ============================================================================
+function F.GetTargetDifficulty()
+    local md = S.ReplicatedStorage:FindFirstChild("MatchData")
+    local mapId = md and md:FindFirstChild("MapId") and tostring(md.MapId.Value) or ""
+    if Config.AutoDetectEventDiff and State.MapDatas and mapId ~= "" then
+        local mapInfo = State.MapDatas[mapId]
+        if mapInfo and type(mapInfo.OverrideDifficulties) == "table" and #mapInfo.OverrideDifficulties > 0 then
+            return tostring(mapInfo.OverrideDifficulties[1])
+        end
+    end
+    return Config.TargetDifficulty
+end
+
+function F.SafeClickPlayAgainButton()
+    local pg = State.LocalPlayer and State.LocalPlayer:FindFirstChild("PlayerGui")
+    local matchGui = pg and pg:FindFirstChild("Match")
+    local finishGui = matchGui and matchGui:FindFirstChild("MatchFinish")
+    local endOpts = finishGui and finishGui:FindFirstChild("MatchFinishFrame") and finishGui.MatchFinishFrame:FindFirstChild("EndOptions")
+    local paBtn = endOpts and endOpts:FindFirstChild("PlayAgain") and endOpts.PlayAgain:FindFirstChild("ButtonFrame") and endOpts.PlayAgain.ButtonFrame:FindFirstChild("PlayAgainButton")
+    if not (paBtn and paBtn:IsA("GuiButton") and paBtn.Visible and finishGui.Visible) then
+        return false
+    end
+    if paBtn.Text == "Cancel Play Again" then
+        return true
+    end
+    local ok = pcall(function()
+        local inset = S.GuiService:GetGuiInset()
+        local center = paBtn.AbsolutePosition + (paBtn.AbsoluteSize * 0.5) + inset
+        S.VirtualInputManager:SendMouseButtonEvent(center.X, center.Y, 0, true, game, 1)
+        task.wait(0.05)
+        S.VirtualInputManager:SendMouseButtonEvent(center.X, center.Y, 0, false, game, 1)
+    end)
+    return ok
+end
+
+function F.StartAutomationLoops()
+    F.TrackConn(State.LocalPlayer.Idled:Connect(function()
+        if Controller.Running and Config.AntiAFK then
+            pcall(function()
+                S.VirtualUser:CaptureController()
+                S.VirtualUser:ClickButton2(Vector2.new())
+            end)
+        end
+    end))
+
+    F.SpawnLoop(function()
+        while Controller.Running do
+            local now = os.clock()
+            local isLobby = S.ReplicatedStorage:FindFirstChild("IsLobby")
+            local inMainGame = (not isLobby) or (isLobby.Value == false)
+
+            if inMainGame then
+                local md = S.ReplicatedStorage:FindFirstChild("MatchData")
+                local curWave = md and md:FindFirstChild("CurrentWave") and tonumber(md.CurrentWave.Value) or 0
+                local curTimer = md and md:FindFirstChild("MatchTimer") and tonumber(md.MatchTimer.Value) or 0
+
+                if curWave == 0 and (State.LastKnownWave > 0 or (State.LastKnownTimer > 5 and curTimer < State.LastKnownTimer)) then
+                    State.MatchEnded = false
+                    State.EndActionSentForMatch = false
+                    State.MatchFinishShownAt = nil
+                    State.MatchStartClock = now
+                end
+                if State.LastKnownWave <= 0 and curWave >= 1 then
+                    State.MatchEnded = false
+                    State.EndActionSentForMatch = false
+                    State.MatchFinishShownAt = nil
+                    if curTimer <= 5 then State.MatchStartClock = now - curTimer end
+                    if Config.AutoPlayMacro and #MacroState.Steps > 0 and not MacroState.IsPlaying and not MacroState.IsRecording then
+                        F.StartPlayback()
+                    end
+                end
+                State.LastKnownWave = curWave
+                State.LastKnownTimer = curTimer
+
+                local pg = State.LocalPlayer:FindFirstChild("PlayerGui")
+                local finishGui = pg and pg:FindFirstChild("Match") and pg.Match:FindFirstChild("MatchFinish")
+                if finishGui and finishGui:IsA("GuiObject") then
+                    if finishGui.Visible then
+                        State.MatchEnded = true
+                        State.MatchFinishShownAt = State.MatchFinishShownAt or now
+                    elseif State.MatchEnded and curWave == 0 and curTimer < 10 then
+                        State.MatchEnded = false
+                        State.EndActionSentForMatch = false
+                        State.MatchFinishShownAt = nil
+                    end
+                end
+
+                if Config.AutoVoteDifficulty and (now - State.Timers.Vote >= 1.0) then
+                    local votingFolder = S.ReplicatedStorage:FindFirstChild("VotingFolder")
+                    local votingVal = md and md:FindFirstChild("Voting")
+                    if votingFolder and (not votingVal or tonumber(votingVal.Value) > 0) then
+                        local pFolder = votingFolder:FindFirstChild("Players")
+                        local myVote = pFolder and pFolder:FindFirstChild("Player_" .. tostring(State.LocalPlayer.UserId))
+                        local targetDiff = F.GetTargetDifficulty()
+                        if not myVote or tostring(myVote.Value) ~= targetDiff then
+                            State.Timers.Vote = now
+                            F.FireEvent("VoteMap", targetDiff)
+                        end
+                    end
+                end
+
+                if (Config.AutoSkipWaves or Config.AutoSkipIntermission) and (now - State.Timers.SkipWave >= 1.0) then
+                    local canSkip = md and md:FindFirstChild("CanSkip")
+                    local votingVal = md and md:FindFirstChild("Voting")
+                    local skipFolder = md and md:FindFirstChild("VoteSkipPlayers")
+                    if canSkip and canSkip.Value == true and (not votingVal or tonumber(votingVal.Value) == 0) then
+                        local want = (curWave == 0 and Config.AutoSkipIntermission) or (curWave > 0 and Config.AutoSkipWaves)
+                        local voted = skipFolder and skipFolder:FindFirstChild(tostring(State.LocalPlayer.UserId))
+                        if want and not voted then
+                            State.Timers.SkipWave = now
+                            F.FireEvent("VoteSkipWave")
+                        end
+                    end
+                end
+
+                if State.MatchEnded and not State.EndActionSentForMatch and Config.AutoEndAction ~= "None" then
+                    if State.MatchFinishShownAt and (now - State.MatchFinishShownAt >= Config.AutoEndDelay) and (now - State.Timers.EndAction >= 1.5) then
+                        State.Timers.EndAction = now
+                        if Config.AutoEndAction == "PlayAgain" then
+                            if F.ResolveEventId("PlayMatchAgain") then
+                                F.FireEvent("PlayMatchAgain")
+                                State.EndActionSentForMatch = true
+                                F.SetStatus("Auto PlayAgain (Remote)")
+                            elseif F.SafeClickPlayAgainButton() then
+                                State.EndActionSentForMatch = true
+                                F.SetStatus("Auto PlayAgain (Safe UI Click)")
+                            end
+                        elseif Config.AutoEndAction == "Lobby" then
+                            if F.FireEvent("TeleportToLobby") then
+                                State.EndActionSentForMatch = true
+                                F.SetStatus("Auto Return to Lobby")
+                            end
+                        end
+                    end
+                end
+            end
+
+            if now - State.Timers.EqSync >= 4.0 then
+                State.Timers.EqSync = now
+                F.SyncEquippedTroops()
+            end
+            task.wait(0.25)
+        end
+    end)
+end
+
+-- ============================================================================
+-- 10. COMPACT RESPONSIVE UI & CLEAN UNLOAD
+-- ============================================================================
+local function makeCorner(parent, r)
+    local c = Instance.new("UICorner")
+    c.CornerRadius = UDim.new(0, r or 6)
+    c.Parent = parent
+end
+
+local function makeStroke(parent, col, thick)
+    local st = Instance.new("UIStroke")
+    st.Color = col or Theme.Stroke
+    st.Thickness = thick or 1
+    st.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    st.Parent = parent
+end
+
+local function makePad(parent, l, r, t, b)
+    local p = Instance.new("UIPadding")
+    p.PaddingLeft, p.PaddingRight = UDim.new(0, l or 8), UDim.new(0, r or 8)
+    p.PaddingTop, p.PaddingBottom = UDim.new(0, t or 6), UDim.new(0, b or 6)
+    p.Parent = parent
+end
+
+local function makeList(parent, pad)
+    local l = Instance.new("UIListLayout")
+    l.Padding = UDim.new(0, pad or 6)
+    l.SortOrder = Enum.SortOrder.LayoutOrder
+    l.Parent = parent
+end
+
+function F.BuildUI()
+    local guiParent = (gethui and gethui()) or S.CoreGui or State.LocalPlayer:WaitForChild("PlayerGui")
+    local old = guiParent:FindFirstChild("LegacyTTDMacroHub")
+    if old then old:Destroy() end
+
+    local sg = Instance.new("ScreenGui")
+    sg.Name = "LegacyTTDMacroHub"
+    sg.ResetOnSpawn = false
+    sg.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    sg.Parent = guiParent
+    UI.ScreenGui = sg
+
+    local main = Instance.new("Frame")
+    main.Size = UDim2.fromOffset(580, 400)
+    main.Position = UDim2.new(0.5, -290, 0.5, -200)
+    main.BackgroundColor3 = Theme.Bg
+    main.BorderSizePixel = 0
+    main.Active = true
+    main.ClipsDescendants = true
+    main.Parent = sg
+    makeCorner(main, 10)
+    makeStroke(main, Theme.Stroke, 1.2)
+
+    local top = Instance.new("Frame")
+    top.Size = UDim2.new(1, 0, 0, 36)
+    top.BackgroundColor3 = Theme.Sidebar
+    top.BorderSizePixel = 0
+    top.Parent = main
+    makeCorner(top, 10)
+
+    local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(1, -145, 1, 0)
+    title.Position = UDim2.fromOffset(12, 0)
+    title.BackgroundTransparency = 1
+    title.Font = Enum.Font.GothamBold
+    title.TextSize = 13
+    title.TextXAlignment = Enum.TextXAlignment.Left
+    title.TextColor3 = Theme.Text
+    title.Text = "LEGACY TTD"
+    title.Parent = top
+
+    local body = Instance.new("Frame")
+    body.Size = UDim2.new(1, 0, 1, -62)
+    body.Position = UDim2.fromOffset(0, 36)
+    body.BackgroundTransparency = 1
+    body.Parent = main
+
+    local statusBar = Instance.new("Frame")
+    statusBar.Size = UDim2.new(1, 0, 0, 26)
+    statusBar.Position = UDim2.new(0, 0, 1, -26)
+    statusBar.BackgroundColor3 = Theme.Sidebar
+    statusBar.BorderSizePixel = 0
+    statusBar.Parent = main
+
+    local statusLbl = Instance.new("TextLabel")
+    statusLbl.Size = UDim2.new(1, -16, 1, 0)
+    statusLbl.Position = UDim2.fromOffset(8, 0)
+    statusLbl.BackgroundTransparency = 1
+    statusLbl.Font = Enum.Font.Code
+    statusLbl.TextSize = 11
+    statusLbl.TextXAlignment = Enum.TextXAlignment.Left
+    statusLbl.TextColor3 = Theme.SubText
+    statusLbl.Text = "Ready"
+    statusLbl.Parent = statusBar
+    UI.StatusLabel = statusLbl
+
+    local function topBtn(txt, xOff, bgCol, onClick)
+        local b = Instance.new("TextButton")
+        b.Size = UDim2.fromOffset(56, 22)
+        b.Position = UDim2.new(1, xOff, 0.5, -11)
+        b.BackgroundColor3 = bgCol
+        b.Font = Enum.Font.GothamSemibold
+        b.TextSize = 11
+        b.TextColor3 = Theme.Text
+        b.Text = txt
+        b.Parent = top
+        makeCorner(b, 5)
+        F.TrackConn(b.Activated:Connect(onClick))
+        return b
+    end
+
+    topBtn("Unload", -64, Theme.Red, function() Controller:Unload() end)
+    local minimized = false
+    local minBtn
+    minBtn = topBtn("Min", -126, Theme.Card, function()
+        minimized = not minimized
+        body.Visible = not minimized
+        statusBar.Visible = not minimized
+        minBtn.Text = minimized and "Open" or "Min"
+        S.TweenService:Create(main, TweenInfo.new(0.15), { Size = UDim2.fromOffset(580, minimized and 36 or 400) }):Play()
+    end)
+
+    local dragging, dragStart, startPos = false, nil, nil
+    F.TrackConn(top.InputBegan:Connect(function(inp)
+        if inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch then
+            dragging, dragStart, startPos = true, inp.Position, main.Position
+        end
+    end))
+    F.TrackConn(S.UserInputService.InputChanged:Connect(function(inp)
+        if dragging and (inp.UserInputType == Enum.UserInputType.MouseMovement or inp.UserInputType == Enum.UserInputType.Touch) then
+            local d = inp.Position - dragStart
+            main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + d.X, startPos.Y.Scale, startPos.Y.Offset + d.Y)
+        end
+    end))
+    F.TrackConn(S.UserInputService.InputEnded:Connect(function(inp)
+        if inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch then dragging = false end
+    end))
+    F.TrackConn(S.UserInputService.InputBegan:Connect(function(inp, gp)
+        if not gp and (inp.KeyCode == Enum.KeyCode.RightControl or inp.KeyCode == Enum.KeyCode.Insert) then
+            main.Visible = not main.Visible
+        end
+    end))
+
+    local side = Instance.new("Frame")
+    side.Size = UDim2.new(0, 120, 1, 0)
+    side.BackgroundColor3 = Theme.Sidebar
+    side.BorderSizePixel = 0
+    side.Parent = body
+    makePad(side, 8, 8, 8, 8)
+    makeList(side, 6)
+
+    local content = Instance.new("Frame")
+    content.Size = UDim2.new(1, -120, 1, 0)
+    content.Position = UDim2.fromOffset(120, 0)
+    content.BackgroundTransparency = 1
+    content.Parent = body
+
+    local tabs, tabButtons = {}, {}
+    local function selectTab(name)
+        for k, p in pairs(tabs) do p.Visible = (k == name) end
+        for k, b in pairs(tabButtons) do b.BackgroundColor3 = (k == name) and Theme.Accent or Theme.Card end
+    end
+
+    local function createTab(name, order)
+        local btn = Instance.new("TextButton")
+        btn.LayoutOrder = order
+        btn.Size = UDim2.new(1, 0, 0, 30)
+        btn.BackgroundColor3 = Theme.Card
+        btn.Font = Enum.Font.GothamSemibold
+        btn.TextSize = 11
+        btn.TextColor3 = Theme.Text
+        btn.Text = name
+        btn.Parent = side
+        makeCorner(btn, 6)
+        tabButtons[name] = btn
+
+        local page = Instance.new("ScrollingFrame")
+        page.Size = UDim2.fromScale(1, 1)
+        page.BackgroundTransparency = 1
+        page.BorderSizePixel = 0
+        page.ScrollBarThickness = 4
+        page.AutomaticCanvasSize = Enum.AutomaticSize.Y
+        page.CanvasSize = UDim2.new(0, 0, 0, 0)
+        page.Visible = false
+        page.Parent = content
+        makePad(page, 10, 12, 8, 8)
+        makeList(page, 8)
+        tabs[name] = page
+        F.TrackConn(btn.Activated:Connect(function() selectTab(name) end))
+        return page
+    end
+
+    local function makeCard(parent, order, titleTxt)
+        local card = Instance.new("Frame")
+        card.LayoutOrder = order
+        card.Size = UDim2.new(1, 0, 0, 0)
+        card.AutomaticSize = Enum.AutomaticSize.Y
+        card.BackgroundColor3 = Theme.Card
+        card.BorderSizePixel = 0
+        card.Parent = parent
+        makeCorner(card, 8)
+        makeStroke(card, Theme.Stroke, 1)
+        makePad(card, 10, 10, 8, 8)
+        makeList(card, 6)
+        if titleTxt then
+            local h = Instance.new("TextLabel")
+            h.LayoutOrder = 0
+            h.Size = UDim2.new(1, 0, 0, 16)
+            h.BackgroundTransparency = 1
+            h.Font = Enum.Font.GothamBold
+            h.TextSize = 12
+            h.TextXAlignment = Enum.TextXAlignment.Left
+            h.TextColor3 = Theme.Accent
+            h.Text = titleTxt
+            h.Parent = card
+        end
+        return card
+    end
+
+    local function makeRow(parent, order, h)
+        local r = Instance.new("Frame")
+        r.LayoutOrder = order
+        r.Size = UDim2.new(1, 0, 0, h or 26)
+        r.BackgroundTransparency = 1
+        r.Parent = parent
+        return r
+    end
+
+    local function addToggle(parent, order, labelTxt, key)
+        local row = makeRow(parent, order, 24)
+        local lbl = Instance.new("TextLabel")
+        lbl.Size = UDim2.new(1, -54, 1, 0)
+        lbl.BackgroundTransparency = 1
+        lbl.Font = Enum.Font.Gotham
+        lbl.TextSize = 12
+        lbl.TextXAlignment = Enum.TextXAlignment.Left
+        lbl.TextColor3 = Theme.Text
+        lbl.Text = labelTxt
+        lbl.Parent = row
+
+        local btn = Instance.new("TextButton")
+        btn.Size = UDim2.fromOffset(48, 22)
+        btn.Position = UDim2.new(1, -48, 0.5, -11)
+        btn.Font = Enum.Font.GothamBold
+        btn.TextSize = 11
+        btn.TextColor3 = Theme.Text
+        btn.Parent = row
+        makeCorner(btn, 5)
+        local function refresh()
+            local v = Config[key] == true
+            btn.BackgroundColor3 = v and Theme.Green or Theme.Sidebar
+            btn.Text = v and "ON" or "OFF"
+        end
+        refresh()
+        F.TrackConn(btn.Activated:Connect(function()
+            Config[key] = not Config[key]
+            F.SaveConfig()
+            refresh()
+        end))
+    end
+
+    local function addCycle(parent, order, labelTxt, key, options, onChange)
+        local row = makeRow(parent, order, 26)
+        local lbl = Instance.new("TextLabel")
+        lbl.Size = UDim2.new(0.52, 0, 1, 0)
+        lbl.BackgroundTransparency = 1
+        lbl.Font = Enum.Font.Gotham
+        lbl.TextSize = 12
+        lbl.TextXAlignment = Enum.TextXAlignment.Left
+        lbl.TextColor3 = Theme.Text
+        lbl.Text = labelTxt
+        lbl.Parent = row
+
+        local btn = Instance.new("TextButton")
+        btn.Size = UDim2.new(0.46, 0, 0, 24)
+        btn.Position = UDim2.new(0.54, 0, 0.5, -12)
+        btn.BackgroundColor3 = Theme.Sidebar
+        btn.Font = Enum.Font.GothamSemibold
+        btn.TextSize = 11
+        btn.TextColor3 = Theme.Accent
+        btn.Parent = row
+        makeCorner(btn, 5)
+        makeStroke(btn, Theme.Stroke, 1)
+        local function refresh() btn.Text = tostring(Config[key]) end
+        refresh()
+        F.TrackConn(btn.Activated:Connect(function()
+            local idx = table.find(options, Config[key]) or 0
+            Config[key] = options[(idx % #options) + 1]
+            F.SaveConfig()
+            refresh()
+            if onChange then onChange(Config[key]) end
+        end))
+    end
+
+    local function addStepper(parent, order, labelTxt, key, stepVal, minVal, maxVal, fmt)
+        local row = makeRow(parent, order, 26)
+        local lbl = Instance.new("TextLabel")
+        lbl.Size = UDim2.new(0.52, 0, 1, 0)
+        lbl.BackgroundTransparency = 1
+        lbl.Font = Enum.Font.Gotham
+        lbl.TextSize = 12
+        lbl.TextXAlignment = Enum.TextXAlignment.Left
+        lbl.TextColor3 = Theme.Text
+        lbl.Text = labelTxt
+        lbl.Parent = row
+
+        local valLbl = Instance.new("TextLabel")
+        valLbl.Size = UDim2.new(0.24, 0, 0, 22)
+        valLbl.Position = UDim2.new(0.65, 0, 0.5, -11)
+        valLbl.BackgroundColor3 = Theme.Sidebar
+        valLbl.Font = Enum.Font.GothamBold
+        valLbl.TextSize = 11
+        valLbl.TextColor3 = Theme.Text
+        valLbl.Parent = row
+        makeCorner(valLbl, 5)
+        local function refresh() valLbl.Text = string.format(fmt, Config[key]) end
+        refresh()
+
+        local function mk(x, txt, d)
+            local b = Instance.new("TextButton")
+            b.Size = UDim2.new(0.1, 0, 0, 22)
+            b.Position = UDim2.new(x, 0, 0.5, -11)
+            b.BackgroundColor3 = Theme.Sidebar
+            b.Font = Enum.Font.GothamBold
+            b.TextSize = 12
+            b.TextColor3 = Theme.Text
+            b.Text = txt
+            b.Parent = row
+            makeCorner(b, 5)
+            F.TrackConn(b.Activated:Connect(function()
+                Config[key] = math.round(math.clamp(Config[key] + d, minVal, maxVal) * 100) / 100
+                F.SaveConfig()
+                refresh()
+            end))
+        end
+        mk(0.54, "-", -stepVal)
+        mk(0.90, "+", stepVal)
+    end
+
+    local function addButtonRow(parent, order, defs)
+        local row = makeRow(parent, order, 26)
+        local n = #defs
+        local gap = 0.02
+        local w = (1 - gap * (n - 1)) / n
+        local out = {}
+        for i, d in ipairs(defs) do
+            local b = Instance.new("TextButton")
+            b.Size = UDim2.new(w, 0, 1, 0)
+            b.Position = UDim2.new((i - 1) * (w + gap), 0, 0, 0)
+            b.BackgroundColor3 = d.Color or Theme.Sidebar
+            b.Font = Enum.Font.GothamSemibold
+            b.TextSize = 11
+            b.TextColor3 = Theme.Text
+            b.Text = d.Text
+            b.Parent = row
+            makeCorner(b, 5)
+            makeStroke(b, Theme.Stroke, 1)
+            F.TrackConn(b.Activated:Connect(d.Callback))
+            out[d.Key or i] = b
+        end
+        return out
+    end
+
+    -- TAB 1: MACRO & REPLAY
+    local tabMacro = createTab("Replay", 1)
+    local cardCtrl = makeCard(tabMacro, 1, "Record & Replay")
+    local nameRow = makeRow(cardCtrl, 1, 26)
+    local nameBox = Instance.new("TextBox")
+    nameBox.Size = UDim2.new(0.64, 0, 1, 0)
+    nameBox.BackgroundColor3 = Theme.Sidebar
+    nameBox.Font = Enum.Font.GothamSemibold
+    nameBox.TextSize = 11
+    nameBox.TextColor3 = Theme.Text
+    nameBox.PlaceholderText = "Macro Name..."
+    nameBox.ClearTextOnFocus = false
+    nameBox.Text = Config.SelectedMacro
+    nameBox.Parent = nameRow
+    makeCorner(nameBox, 5)
+    makeStroke(nameBox, Theme.Stroke, 1)
+    makePad(nameBox, 8, 8, 0, 0)
+    UI.MacroNameBox = nameBox
+
+    local saveBtn = Instance.new("TextButton")
+    saveBtn.Size = UDim2.new(0.17, 0, 1, 0)
+    saveBtn.Position = UDim2.new(0.66, 0, 0, 0)
+    saveBtn.BackgroundColor3 = Theme.Accent
+    saveBtn.Font = Enum.Font.GothamBold
+    saveBtn.TextSize = 11
+    saveBtn.TextColor3 = Theme.Text
+    saveBtn.Text = "Save"
+    saveBtn.Parent = nameRow
+    makeCorner(saveBtn, 5)
+    F.TrackConn(saveBtn.Activated:Connect(function()
+        nameBox.Text = F.SanitizeName(nameBox.Text)
+        F.SaveMacro(nameBox.Text)
+    end))
+
+    local loadBtn = Instance.new("TextButton")
+    loadBtn.Size = UDim2.new(0.16, 0, 1, 0)
+    loadBtn.Position = UDim2.new(0.84, 0, 0, 0)
+    loadBtn.BackgroundColor3 = Theme.Sidebar
+    loadBtn.Font = Enum.Font.GothamBold
+    loadBtn.TextSize = 11
+    loadBtn.TextColor3 = Theme.Text
+    loadBtn.Text = "Load"
+    loadBtn.Parent = nameRow
+    makeCorner(loadBtn, 5)
+    makeStroke(loadBtn, Theme.Stroke, 1)
+    F.TrackConn(loadBtn.Activated:Connect(function()
+        nameBox.Text = F.SanitizeName(nameBox.Text)
+        F.LoadMacro(nameBox.Text)
+    end))
+
+    UI.MacroActionBtns = addButtonRow(cardCtrl, 2, {
+        { Key = "Rec", Text = "Record", Color = Theme.Sidebar, Callback = function()
+            if MacroState.IsRecording then F.StopRecording() else F.StartRecording() end
+        end },
+        { Key = "Play", Text = "Replay", Color = Theme.Sidebar, Callback = function()
+            if MacroState.IsPlaying then F.StopPlayback() else F.StartPlayback() end
+        end },
+        { Key = "Stop", Text = "Stop", Color = Theme.Sidebar, Callback = function()
+            F.StopRecording()
+            F.StopPlayback()
+        end },
+        { Key = "Clear", Text = "Clear", Color = Theme.Sidebar, Callback = function() F.ClearMacro() end },
+    })
+
+    addCycle(cardCtrl, 3, "Replay Timing Mode", "PlaybackTimingOverride", TIMING_MODES, function() State.StepsDirty = true end)
+    addToggle(cardCtrl, 4, "Auto-Replay On Match Start", "AutoPlayMacro")
+    addToggle(cardCtrl, 5, "Safe Pacing", "SafePacing")
+    addToggle(cardCtrl, 6, "Record Only Sell Timed", "RecordOnlySellTimed")
+    addToggle(cardCtrl, 7, "Wait If Unit Stunned", "WaitIfStunned")
+
+    local cardSteps = makeCard(tabMacro, 2, "Macro Steps")
+    local stepHdr = Instance.new("TextLabel")
+    stepHdr.LayoutOrder = 1
+    stepHdr.Size = UDim2.new(1, 0, 0, 16)
+    stepHdr.BackgroundTransparency = 1
+    stepHdr.Font = Enum.Font.Code
+    stepHdr.TextSize = 11
+    stepHdr.TextXAlignment = Enum.TextXAlignment.Left
+    stepHdr.TextColor3 = Theme.SubText
+    stepHdr.Text = "Steps: 0"
+    stepHdr.Parent = cardSteps
+    UI.StepHeaderLabel = stepHdr
+
+    addButtonRow(cardSteps, 2, {
+        { Text = "Reset Step 1", Color = Theme.Sidebar, Callback = function()
+            MacroState.CurrentStep = 1
+            MacroState.SoldUnits = {}
+            MacroState.PlayUnitMap = {}
+            State.StepsDirty = true
+            F.SetStatus("Reset to Step 1")
+        end },
+        { Text = "Trim Last", Color = Theme.Sidebar, Callback = function()
+            if #MacroState.Steps > 0 then
+                table.remove(MacroState.Steps)
+                State.StepsDirty = true
+            end
+        end },
+    })
+
+    local stepScroll = Instance.new("ScrollingFrame")
+    stepScroll.LayoutOrder = 3
+    stepScroll.Size = UDim2.new(1, 0, 0, 125)
+    stepScroll.BackgroundColor3 = Theme.Sidebar
+    stepScroll.BorderSizePixel = 0
+    stepScroll.ScrollBarThickness = 4
+    stepScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    stepScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+    stepScroll.Parent = cardSteps
+    makeCorner(stepScroll, 6)
+    makePad(stepScroll, 6, 6, 4, 4)
+    makeList(stepScroll, 2)
+
+    -- TAB 2: MATCH, SKIP & PLAY AGAIN
+    local tabMatch = createTab("Match", 2)
+    local cardVote = makeCard(tabMatch, 1, "Voting & Wave Skip")
+    addToggle(cardVote, 1, "Auto-Vote Difficulty", "AutoVoteDifficulty")
+    addToggle(cardVote, 2, "Auto-Detect Event Difficulty", "AutoDetectEventDiff")
+    addCycle(cardVote, 3, "Target Difficulty", "TargetDifficulty", DIFFICULTIES)
+    addToggle(cardVote, 4, "Auto-Skip Waves", "AutoSkipWaves")
+    addToggle(cardVote, 5, "Auto-Skip Intermission", "AutoSkipIntermission")
+
+    local cardEnd = makeCard(tabMatch, 2, "End-of-Match & Safety")
+    addCycle(cardEnd, 1, "End Action", "AutoEndAction", END_ACTIONS)
+    addStepper(cardEnd, 2, "End Action Delay", "AutoEndDelay", 0.5, 0.0, 10.0, "%.1fs")
+    addToggle(cardEnd, 3, "Anti-AFK", "AntiAFK")
+
+    -- TAB 3: QUICK ACTIONS & SAVED FILES
+    local tabActions = createTab("Actions", 3)
+    local cardQuick = makeCard(tabActions, 1, "Owned Units Quick Actions")
+    addButtonRow(cardQuick, 1, {
+        { Text = "Upgrade All x1", Color = Theme.Green, Callback = function() F.UpgradeAllUnits(false) end },
+        { Text = "Max All Units", Color = Theme.Accent, Callback = function() F.UpgradeAllUnits(true) end },
+    })
+    addButtonRow(cardQuick, 2, {
+        { Text = "Sell Farms", Color = Theme.Amber, Callback = function() F.SellUnits(true) end },
+        { Text = "Sell All Units", Color = Theme.Red, Callback = function() F.SellUnits(false) end },
+    })
+
+    local cardFiles = makeCard(tabActions, 2, "Saved Macro Files")
+    addButtonRow(cardFiles, 1, {
+        { Text = "Refresh List", Color = Theme.Sidebar, Callback = function() State.FileListDirty = true end },
+        { Text = "Delete File", Color = Theme.Red, Callback = function() F.DeleteMacro(nameBox.Text) end },
+    })
+    local fileScroll = Instance.new("ScrollingFrame")
+    fileScroll.LayoutOrder = 2
+    fileScroll.Size = UDim2.new(1, 0, 0, 110)
+    fileScroll.BackgroundColor3 = Theme.Sidebar
+    fileScroll.BorderSizePixel = 0
+    fileScroll.ScrollBarThickness = 4
+    fileScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    fileScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+    fileScroll.Parent = cardFiles
+    makeCorner(fileScroll, 6)
+    makePad(fileScroll, 6, 6, 4, 4)
+    makeList(fileScroll, 4)
+
+    function UI.RefreshFiles()
+        for _, ch in ipairs(fileScroll:GetChildren()) do
+            if ch:IsA("TextButton") then ch:Destroy() end
+        end
+        for idx, mName in ipairs(F.ListMacros()) do
+            local fb = Instance.new("TextButton")
+            fb.LayoutOrder = idx
+            fb.Size = UDim2.new(1, 0, 0, 22)
+            fb.BackgroundColor3 = (mName == Config.SelectedMacro) and Theme.Accent or Theme.Card
+            fb.Font = Enum.Font.GothamSemibold
+            fb.TextSize = 11
+            fb.TextXAlignment = Enum.TextXAlignment.Left
+            fb.TextColor3 = Theme.Text
+            fb.Text = "  " .. mName
+            fb.Parent = fileScroll
+            makeCorner(fb, 4)
+            F.TrackConn(fb.Activated:Connect(function()
+                nameBox.Text = mName
+                F.LoadMacro(mName)
+            end))
+        end
+        State.FileListDirty = false
+    end
+
+    function UI.RefreshSteps()
+        stepHdr.Text = string.format("Steps: %d | Cur: %d | Mode: %s", #MacroState.Steps, MacroState.CurrentStep, F.GetEffectiveTimingMode())
+        for _, ch in ipairs(stepScroll:GetChildren()) do
+            if ch:IsA("TextLabel") then ch:Destroy() end
+        end
+        local total = #MacroState.Steps
+        local startIdx = math.max(1, MacroState.IsPlaying and (MacroState.CurrentStep - 5) or (total - 35))
+        local endIdx = math.min(total, startIdx + 45)
+        for i = startIdx, endIdx do
+            local st = MacroState.Steps[i]
+            local line
+            if st.Type == "Place" and type(st.Pos) == "table" then
+                line = string.format("#%d [W%s %.1fs] Place %s (#%s) @(%.1f,%.1f,%.1f) R%s",
+                    i, tostring(st.Wave or 0), tonumber(st.MatchTime) or 0, tostring(st.Troop), tostring(st.UnitId),
+                    tonumber(st.Pos[1]) or 0, tonumber(st.Pos[2]) or 0, tonumber(st.Pos[3]) or 0, tostring(st.Rot or 1))
+            elseif st.Type == "Upgrade" then
+                line = string.format("#%d [W%s %.1fs] Upgrade #%s (%s) -> Lv%s",
+                    i, tostring(st.Wave or 0), tonumber(st.MatchTime) or 0, tostring(st.UnitId), tostring(st.Troop or "?"), tostring(st.Level or "+1"))
+            elseif st.Type == "Target" then
+                line = string.format("#%d [W%s %.1fs] Target #%s -> %s",
+                    i, tostring(st.Wave or 0), tonumber(st.MatchTime) or 0, tostring(st.UnitId), tostring(st.Target))
+            else
+                line = string.format("#%d [W%s %.1fs] Sell #%s (%s)",
+                    i, tostring(st.Wave or 0), tonumber(st.MatchTime) or 0, tostring(st.UnitId), tostring(st.Troop or "?"))
+            end
+            local lbl = Instance.new("TextLabel")
+            lbl.LayoutOrder = i
+            lbl.Size = UDim2.new(1, 0, 0, 17)
+            lbl.BackgroundTransparency = (i == MacroState.CurrentStep and MacroState.IsPlaying) and 0.7 or 1
+            lbl.BackgroundColor3 = Theme.Accent
+            lbl.Font = Enum.Font.Code
+            lbl.TextSize = 10
+            lbl.TextXAlignment = Enum.TextXAlignment.Left
+            lbl.TextColor3 = (i < MacroState.CurrentStep and MacroState.IsPlaying) and Theme.SubText
+                or ((i == MacroState.CurrentStep and MacroState.IsPlaying) and Theme.Green or Theme.Text)
+            lbl.Text = line
+            lbl.Parent = stepScroll
+        end
+        State.StepsDirty = false
+    end
+
+    selectTab("Replay")
+end
+
+function F.StartUIRefreshLoop()
+    F.SpawnLoop(function()
+        while Controller.Running do
+            local md = S.ReplicatedStorage:FindFirstChild("MatchData")
+            local mapId = (md and md:FindFirstChild("MapId") and tostring(md.MapId.Value)) or "Lobby"
+            local wave, mTime = F.GetMatchWaveAndTime()
+            if UI.StatusLabel then
+                UI.StatusLabel.Text = string.format("%s | %s | W%d %.0fs | $%d | %s",
+                    State.BridgeStatusText, mapId, wave, mTime, F.GetMoney(), MacroState.StatusText)
+            end
+            if UI.MacroActionBtns then
+                local recB, playB = UI.MacroActionBtns.Rec, UI.MacroActionBtns.Play
+                if recB then
+                    recB.BackgroundColor3 = MacroState.IsRecording and Theme.Red or Theme.Sidebar
+                    recB.Text = MacroState.IsRecording and "Stop Rec" or "Record"
+                end
+                if playB then
+                    playB.BackgroundColor3 = MacroState.IsPlaying and Theme.Green or Theme.Sidebar
+                    playB.Text = MacroState.IsPlaying and "Pause" or "Replay"
+                end
+            end
+            if State.FileListDirty and UI.RefreshFiles then pcall(UI.RefreshFiles) end
+            if State.StepsDirty and UI.RefreshSteps then pcall(UI.RefreshSteps) end
+            task.wait(0.25)
+        end
+    end)
+end
+
+-- ============================================================================
+-- 11. UNLOAD & STARTUP
+-- ============================================================================
+function Controller:Unload()
+    if not self.Running then return end
+    self.Running = false
+    MacroState.IsRecording = false
+    MacroState.IsPlaying = false
+    F.ClearRecordConnections()
+    for _, c in ipairs(self.Connections) do pcall(function() c:Disconnect() end) end
+    table.clear(self.Connections)
+    for _, c in ipairs(self.BridgeConnections) do pcall(function() c:Disconnect() end) end
+    table.clear(self.BridgeConnections)
+    for _, th in ipairs(self.Threads) do pcall(task.cancel, th) end
+    table.clear(self.Threads)
+    if UI.ScreenGui then
+        pcall(function() UI.ScreenGui:Destroy() end)
+        UI.ScreenGui = nil
+    end
+    if ENV.LegacyTDMacroHub == self then ENV.LegacyTDMacroHub = nil end
+end
+
+F.BuildUI()
+F.InitGameData()
+F.InitNetwork()
+F.SyncEquippedTroops()
+if Config.SelectedMacro and Config.SelectedMacro ~= "" then
+    F.LoadMacro(Config.SelectedMacro)
+end
+State.FileListDirty = true
+State.StepsDirty = true
+F.StartAutomationLoops()
+F.StartUIRefreshLoop()
+
+do
+    local isLobby = S.ReplicatedStorage:FindFirstChild("IsLobby")
+    local md = S.ReplicatedStorage:FindFirstChild("MatchData")
+    local curWave = md and md:FindFirstChild("CurrentWave") and tonumber(md.CurrentWave.Value) or 0
+    if Config.AutoPlayMacro and #MacroState.Steps > 0 and (not isLobby or isLobby.Value == false) and curWave == 1 and #F.GetOwnedTroopModels() == 0 then
+        F.StartPlayback()
+    end
+end
